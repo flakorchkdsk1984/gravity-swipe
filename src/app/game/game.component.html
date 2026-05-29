@@ -1,0 +1,6 @@
+<div class="game-wrapper">
+  <div #phaserContainer class="phaser-container"></div>
+  <app-game-ui></app-game-ui>
+  <app-game-over></app-game-over>
+  <app-tutorial *ngIf="showTutorial" (dismissed)="onTutorialDismissed()"></app-tutorial>
+</div>

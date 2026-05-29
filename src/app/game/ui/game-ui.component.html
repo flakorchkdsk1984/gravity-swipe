@@ -1,0 +1,17 @@
+<div class="hud" *ngIf="!state.isGameOver">
+  <div class="score">{{ state.score | number }}</div>
+
+  <div class="combo" [class.animating]="comboAnimating" *ngIf="state.combo > 1">
+    x{{ state.combo }} <span class="multiplier">×{{ state.multiplier }}</span>
+  </div>
+
+  <div class="charge-bar-container">
+    <div
+      class="charge-bar"
+      [style.width.%]="state.chargeLevel * 100"
+      [class.full]="state.chargeLevel >= 0.95"
+    ></div>
+  </div>
+
+  <div class="near-miss-flash" [class.active]="nearMissFlash"></div>
+</div>

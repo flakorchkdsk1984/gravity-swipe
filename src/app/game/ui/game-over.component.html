@@ -1,0 +1,24 @@
+<div class="game-over" *ngIf="visible" [@slideIn]>
+  <h1 class="title">GAME OVER</h1>
+
+  <div class="score-block">
+    <div class="label">SCORE</div>
+    <div class="value">{{ state.finalScore | number }}</div>
+  </div>
+
+  <div class="score-block" *ngIf="state.maxCombo > 0">
+    <div class="label">MAX COMBO</div>
+    <div class="value">x{{ state.maxCombo }}</div>
+  </div>
+
+  <div class="score-block best" *ngIf="state.finalScore >= state.bestScore && state.finalScore > 0">
+    <div class="label">🏆 NEW BEST!</div>
+    <div class="value">{{ state.bestScore | number }}</div>
+  </div>
+
+  <button class="restart-btn" (click)="onRestart()" (touchend)="onRestart()">
+    TAP TO RETRY
+  </button>
+
+  <div class="best-score">BEST: {{ state.bestScore | number }}</div>
+</div>

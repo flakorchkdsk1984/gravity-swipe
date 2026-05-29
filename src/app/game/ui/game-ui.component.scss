@@ -1,0 +1,106 @@
+@keyframes combo-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.45); }
+  70%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+@keyframes near-miss-flash {
+  0%   { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+@keyframes charge-glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px var(--color-primary), 0 0 18px 4px var(--color-primary); }
+  50%       { box-shadow: 0 0 16px 6px var(--color-primary), 0 0 36px 10px var(--color-primary); }
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: var(--font-game);
+  user-select: none;
+}
+
+// ── Score ────────────────────────────────────────────────────
+.score {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+  line-height: 1;
+}
+
+// ── Combo indicator ──────────────────────────────────────────
+.combo {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  color: var(--color-combo);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  transform-origin: left center;
+  will-change: transform;
+
+  &.animating {
+    animation: combo-pulse 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+
+  .multiplier {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0.85;
+  }
+}
+
+// ── Charge bar ───────────────────────────────────────────────
+.charge-bar-container {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.charge-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: width 0.05s linear;
+  box-shadow: 0 0 6px 1px var(--color-primary);
+  min-width: 0;
+
+  &.full {
+    background: #ffffff;
+    animation: charge-glow-pulse 0.5s ease-in-out infinite;
+  }
+}
+
+// ── Near-miss flash ──────────────────────────────────────────
+.near-miss-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 0, 0.55);
+  pointer-events: none;
+  opacity: 0;
+
+  &.active {
+    animation: near-miss-flash 0.3s ease-out forwards;
+  }
+}
