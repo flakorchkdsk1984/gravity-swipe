@@ -13,6 +13,23 @@ _Próximos cambios pendientes de lanzamiento._
 
 ---
 
+## [0.0.3-beta] - 2026-05-30
+
+### Añadido
+- **Menú de inicio animado** — título neon con pulso, botón ▶ PLAY, botón 🏆 BEST TIMES con overlay de leaderboard, estrellas flotantes y badge de versión
+- **Sistema de color del personaje** — al recoger un power object el jugador toma ese color (cuerpo, glow y trail)
+- **7 tipos de propulsión** — cada poder cambia la mecánica de movimiento:
+  - 🔴 ROCKET: dash 1.8× más rápido
+  - 🟠 BOUNCER: rebotes amplificados ×3 en paredes
+  - 🟡 LIGHTNING: teletransporte de 200px en dirección del aim
+  - 🟢 GRAVITY DRIFT: fuerza continua en la dirección apuntada por 1.5s
+  - 🔵 ICE GLIDE: dirección snapped a 45°, rozamiento casi nulo
+  - 🟣 PHASE: jugador semi-transparente con trail fantasma
+  - ⚪ ORBIT SHOT: trayectoria curva en arco durante el vuelo
+- Al expirar el poder, el jugador recupera color y propulsión por defecto
+
+---
+
 ## [0.0.2-beta] - 2026-05-30
 
 ### Añadido
