@@ -1,6 +1,6 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { GameEvent, GameOverPayload, ScorePayload, ComboPayload } from '../config/types';
+import { GameEvent, GameOverPayload, ScorePayload, ComboPayload, PowerType } from '../config/types';
 
 export interface UIState {
   score: number;
@@ -14,6 +14,13 @@ export interface UIState {
   survivalTime: number;
   isPlaying: boolean;
   showTutorial: boolean;
+  // Timer / stage
+  timerMs: number;
+  timerFormatted: string;
+  activePowers: PowerType[];
+  stageCompleted: boolean;
+  finishTimeMs: number;
+  playerProgress: number;   // 0-1, distance towards finish
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,6 +31,9 @@ export class GameStateService implements OnDestroy {
     isGameOver: false, finalScore: 0, bestScore: 0,
     maxCombo: 0, survivalTime: 0, isPlaying: false,
     showTutorial: false,
+    timerMs: 0, timerFormatted: '00:00.00',
+    activePowers: [], stageCompleted: false, finishTimeMs: 0,
+    playerProgress: 0,
   };
 
   readonly state$ = new BehaviorSubject<UIState>({ ...this._state });
@@ -69,6 +79,9 @@ export class GameStateService implements OnDestroy {
       this.patch({
         score: 0, combo: 0, multiplier: 1, chargeLevel: 0,
         isGameOver: false, isPlaying: true,
+        timerMs: 0, timerFormatted: '00:00.00',
+        activePowers: [], stageCompleted: false, finishTimeMs: 0,
+        playerProgress: 0,
       });
     });
 
@@ -81,6 +94,33 @@ export class GameStateService implements OnDestroy {
         finalScore: p.finalScore, maxCombo: p.maxCombo,
         survivalTime: p.survivalTime, bestScore: best,
       });
+    });
+
+    on('gs:' + GameEvent.TIMER_UPDATE, (e) => {
+      const p = e.detail as { ms: number; formatted: string };
+      this.patch({ timerMs: p.ms, timerFormatted: p.formatted });
+    });
+
+    on('gs:' + GameEvent.POWER_ACTIVATED, (e) => {
+      const p = e.detail as { type: string };
+      const powers = [...this._state.activePowers, p.type as PowerType];
+      this.patch({ activePowers: powers });
+    });
+
+    on('gs:' + GameEvent.POWER_EXPIRED, (e) => {
+      const p = e.detail as { type: string };
+      const powers = this._state.activePowers.filter(x => x !== p.type);
+      this.patch({ activePowers: powers });
+    });
+
+    on('gs:' + GameEvent.STAGE_FINISH, (e) => {
+      const p = e.detail as { timeMs: number; score: number; maxCombo: number };
+      this.patch({ stageCompleted: true, finishTimeMs: p.timeMs, isGameOver: true, isPlaying: false, finalScore: p.score, maxCombo: p.maxCombo });
+    });
+
+    on('gs:' + GameEvent.LEVEL_PROGRESS, (e) => {
+      const p = e.detail as { progress: number };
+      this.patch({ playerProgress: Math.min(1, Math.max(0, p.progress)) });
     });
   }
 

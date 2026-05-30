@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GameStateService, UIState } from '../services/game-state.service';
 import { GameEvent } from '../config/types';
+import { LeaderboardService } from '../services/leaderboard.service';
+import { POWER_LABELS } from '../config/GameConfig';
 
 @Component({
   selector: 'app-game-ui',
@@ -14,6 +16,9 @@ export class GameUIComponent implements OnInit, OnDestroy {
     isGameOver: false, finalScore: 0, bestScore: 0,
     maxCombo: 0, survivalTime: 0, isPlaying: false,
     showTutorial: false,
+    timerMs: 0, timerFormatted: '00:00.00',
+    activePowers: [], stageCompleted: false, finishTimeMs: 0,
+    playerProgress: 0,
   };
   comboAnimating = false;
   nearMissFlash = false;
@@ -24,7 +29,7 @@ export class GameUIComponent implements OnInit, OnDestroy {
   private nearMissTimer: ReturnType<typeof setTimeout> | null = null;
   private nearMissListener!: EventListener;
 
-  constructor(private gameState: GameStateService) {}
+  constructor(private gameState: GameStateService, private leaderboard: LeaderboardService) {}
 
   ngOnInit(): void {
     this.stateSub = this.gameState.state$.subscribe(s => {
@@ -66,5 +71,22 @@ export class GameUIComponent implements OnInit, OnDestroy {
     this.nearMissTimer = setTimeout(() => {
       this.nearMissFlash = false;
     }, 300);
+  }
+
+  getPowerLabel(power: string): string {
+    return POWER_LABELS[power] ?? power;
+  }
+
+  getPowerColor(power: string): string {
+    const colors: Record<string, string> = {
+      speed_boost: '#ff2244',
+      shield:      '#ff8800',
+      score_x2:    '#ffdd00',
+      slow_extend: '#00cc44',
+      freeze:      '#00aaff',
+      ghost:       '#cc44ff',
+      magnet:      '#cccccc',
+    };
+    return colors[power] ?? '#ffffff';
   }
 }

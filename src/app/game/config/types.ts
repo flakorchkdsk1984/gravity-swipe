@@ -68,6 +68,14 @@ export enum GameEvent {
   GAME_OVER        = 'game:over',
   GAME_RESTART     = 'game:restart',
   LEVEL_PROGRESS   = 'level:progress',
+
+  // Powers
+  POWER_COLLECTED  = 'power:collected',
+  POWER_EXPIRED    = 'power:expired',
+  POWER_ACTIVATED  = 'power:activated',
+  // Stage
+  STAGE_FINISH     = 'stage:finish',
+  TIMER_UPDATE     = 'timer:update',
 }
 
 // ── Event Payloads ───────────────────────────────────────────
@@ -106,6 +114,8 @@ export interface GameOverPayload {
   finalScore: number;
   maxCombo: number;
   survivalTime: number;
+  stageCompleted?: boolean;
+  finishTimeMs?: number;
 }
 
 // ── Obstacle Definitions ─────────────────────────────────────
@@ -196,4 +206,33 @@ export interface IGameConfig {
     trailLength: number;
     particleCount: number;
   };
+}
+
+// ── Power System ─────────────────────────────────────────────
+export enum PowerType {
+  SPEED_BOOST = 'speed_boost',  // 🔴 Red
+  SHIELD      = 'shield',       // 🟠 Orange
+  SCORE_X2    = 'score_x2',     // 🟡 Yellow
+  SLOW_EXTEND = 'slow_extend',  // 🟢 Green
+  FREEZE      = 'freeze',       // 🔵 Blue
+  GHOST       = 'ghost',        // 🟣 Purple
+  MAGNET      = 'magnet',       // ⚪ White
+}
+
+export interface PowerConfig {
+  type: PowerType;
+  x: number;
+  y: number;
+}
+
+export interface PowerPayload {
+  type: PowerType;
+  position: Vec2;
+}
+
+// ── Finish / Stage ────────────────────────────────────────────
+export interface StageFinishPayload {
+  timeMs: number;       // milliseconds from game start to finish
+  score: number;
+  maxCombo: number;
 }

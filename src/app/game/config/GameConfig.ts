@@ -94,3 +94,37 @@ export const PHASER_CONFIG = {
     pixelArt:  false,
   },
 };
+
+// Power colors (one per PowerType, same order as enum)
+export const POWER_COLORS: Record<string, number> = {
+  speed_boost: 0xff2244,   // Red
+  shield:      0xff8800,   // Orange
+  score_x2:    0xffff00,   // Yellow
+  slow_extend: 0x00ff44,   // Green
+  freeze:      0x00aaff,   // Blue
+  ghost:       0xaa44ff,   // Purple
+  magnet:      0xffffff,   // White
+};
+
+export const POWER_LABELS: Record<string, string> = {
+  speed_boost: '⚡ SPEED',
+  shield:      '🛡 SHIELD',
+  score_x2:    '✨ ×2 SCORE',
+  slow_extend: '🌀 SLOW-MO',
+  freeze:      '❄️ FREEZE',
+  ghost:       '👻 GHOST',
+  magnet:      '🧲 MAGNET',
+};
+
+export const POWER_DURATIONS: Record<string, number> = {
+  speed_boost: 5000,
+  shield:      0,      // one-hit, no timer
+  score_x2:    10000,
+  slow_extend: 4000,
+  freeze:      3000,
+  ghost:       4000,
+  magnet:      6000,
+};
+
+export const FINISH_Y = -10800;      // world Y of finish line
+export const FINISH_CHUNKS = 18;     // number of chunks to finish
