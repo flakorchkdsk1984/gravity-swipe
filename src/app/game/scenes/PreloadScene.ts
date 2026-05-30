@@ -62,7 +62,7 @@ export class PreloadScene extends Phaser.Scene {
       this.loadingText.setText('READY');
       this.loadingText.setColor('#00ffff');
       this.time.delayedCall(200, () => {
-        this.scene.start('MainGameScene');
+        this.scene.start('MenuScene');
       });
     });
   }

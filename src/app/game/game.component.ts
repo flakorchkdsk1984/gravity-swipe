@@ -56,13 +56,14 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       const PhaserMod: any = await import('phaser');
       const PhaserLib = PhaserMod.default ?? PhaserMod;
       const { PreloadScene } = await import('./scenes/PreloadScene');
+      const { MenuScene } = await import('./scenes/MenuScene');
       const { MainGameScene } = await import('./scenes/MainGameScene');
       const { PHASER_CONFIG } = await import('./config/GameConfig');
 
       const config = {
         ...PHASER_CONFIG,
         parent: this.phaserContainer.nativeElement,
-        scene: [PreloadScene, MainGameScene],
+        scene: [PreloadScene, MenuScene, MainGameScene],
       };
 
       this.game = new PhaserLib.Game(config);
