@@ -1,4 +1,4 @@
-<div class="game-wrapper">
+<div class="game-wrapper" [class.game-overlay-active]="isGameOver">
   <div #phaserContainer class="phaser-container"></div>
   <app-game-ui></app-game-ui>
   <app-game-over></app-game-over>

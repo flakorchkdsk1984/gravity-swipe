@@ -21,17 +21,16 @@
     <!-- Emoji selector (only before saving) -->
     <ng-container *ngIf="!timeSaved">
       <div class="emoji-section">
-        <div class="emoji-title">TU NOMBRE (1-4 LETRAS)</div>
+        <div class="emoji-title">TUS INICIALES</div>
         <input
           class="name-input"
           type="text"
           maxlength="4"
-          [value]="playerName"
-          (input)="onNameChange($any($event.target).value)"
+          [(ngModel)]="playerName"
           placeholder="AAA"
           autocomplete="off"
-          autocorrect="off"
           spellcheck="false"
+          inputmode="text"
         />
         <div class="emoji-title" style="margin-top:10px">ELIGE TU AVATAR</div>
         <div class="emoji-grid">
@@ -39,11 +38,9 @@
             *ngFor="let e of EMOJI_OPTIONS"
             class="emoji-btn"
             [class.selected]="e === selectedEmoji"
-            (click)="onEmojiSelect(e)"
-            (touchend)="onEmojiSelect(e)"
-          >{{ e }}</button>
+            (click)="onEmojiSelect(e)">{{ e }}</button>
         </div>
-        <button class="save-btn" (click)="onSaveTime()" (touchend)="onSaveTime()">
+        <button class="save-btn" (click)="onSaveTime()">
           💾 GUARDAR TIEMPO
         </button>
       </div>
@@ -62,7 +59,7 @@
       >
         <span class="lb-rank">#{{ i + 1 }}</span>
         <span class="lb-emoji">{{ entry.emoji }}</span>
-        <span class="lb-name">{{ entry.name || entry.emoji }}</span>
+        <span class="lb-name">{{ entry.name || '???' }}</span>
         <span class="lb-time">{{ formatTime(entry.timeMs) }}</span>
         <span class="lb-score">{{ entry.score | number }}</span>
       </div>
@@ -91,10 +88,10 @@
 
   <!-- Buttons -->
   <div class="action-buttons">
-    <button class="restart-btn" (click)="onRestart()" (touchend)="onRestart()">
+    <button class="restart-btn" (click)="onRestart()">
       🔄 REINTENTAR
     </button>
-    <button *ngIf="state.stageCompleted" class="stages-btn" (click)="onGoToStageSelect()" (touchend)="onGoToStageSelect()">
+    <button *ngIf="state.stageCompleted" class="stages-btn" (click)="onGoToStageSelect()">
       🗺️ VER ETAPAS
     </button>
   </div>

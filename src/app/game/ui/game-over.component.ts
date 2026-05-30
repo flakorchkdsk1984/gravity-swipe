@@ -56,6 +56,7 @@ export class GameOverComponent implements OnInit, OnDestroy {
   constructor(private gameState: GameStateService, private leaderboardSvc: LeaderboardService) {}
 
   ngOnInit(): void {
+    this.leaderboardEntries = this.leaderboardSvc.getEntries();
     this.stateSub = this.gameState.state$.subscribe(s => {
       const wasCompleted = this.state.stageCompleted;
       this.state = s;
@@ -64,6 +65,10 @@ export class GameOverComponent implements OnInit, OnDestroy {
       if (s.stageCompleted && !wasCompleted) {
         this.timeSaved = false;
         this.leaderboardEntries = this.leaderboardSvc.getEntries();
+      }
+      if (!s.isGameOver) {
+        this.timeSaved = false;
+        this.playerName = 'AAA';
       }
     });
   }
@@ -86,8 +91,9 @@ export class GameOverComponent implements OnInit, OnDestroy {
 
   onSaveTime(): void {
     if (this.timeSaved) return;
+    const sanitized = (this.playerName || 'AAA').toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4) || 'AAA';
     const entry: LeaderboardEntry = {
-      name: this.playerName || 'AAA',
+      name: sanitized,
       emoji: this.selectedEmoji,
       timeMs: this.state.finishTimeMs,
       score: this.state.finalScore,

@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
 import { EventBus } from './EventBus';
-import { GameEvent, Vec2 } from '../config/types';
-import { GAME_CONFIG, COLORS } from '../config/GameConfig';
+import { GameEvent, Vec2, PowerType } from '../config/types';
+import { GAME_CONFIG, COLORS, POWER_COLORS } from '../config/GameConfig';
 
 const MAX_CHARGE_TIME = GAME_CONFIG.physics.maxChargeTime;
 
 export class InputManager {
   private scene: Phaser.Scene;
   private graphics: Phaser.GameObjects.Graphics;
+
+  private activePowerColor: number = COLORS.uiCharge; // default cyan
 
   private isDown = false;
   private startX = 0;
@@ -109,6 +111,14 @@ export class InputManager {
 
   // ── Drawing ─────────────────────────────────────────────────────────────────
 
+  setActivePower(type: PowerType | null): void {
+    if (type && POWER_COLORS[type]) {
+      this.activePowerColor = POWER_COLORS[type];
+    } else {
+      this.activePowerColor = COLORS.uiCharge; // cyan default
+    }
+  }
+
   private _drawAimIndicator(charge: number): void {
     const gfx = this.graphics;
     gfx.clear();
@@ -118,50 +128,109 @@ export class InputManager {
     const len = Math.sqrt(dx * dx + dy * dy);
     if (len < 5) return;
 
-    // Arrow from touch start toward aim direction
     const nx = dx / len;
     const ny = dy / len;
 
-    // Color shifts cyan → white at full charge
-    const alpha  = 0.5 + charge * 0.5;
-    const color  = charge > 0.8 ? 0xffffff : COLORS.uiCharge;
-    const arrowLen = 80 + charge * 120;
+    const baseColor = this.activePowerColor;
+    const alpha = 0.4 + charge * 0.6;
+    const arrowLen = 90 + charge * 140;
 
-    // Dashed line segments
-    gfx.lineStyle(2, color, alpha);
-    const dashes = 8;
-    for (let i = 0; i < dashes; i++) {
-      const t0 = i / dashes;
-      const t1 = (i + 0.55) / dashes;
-      gfx.beginPath();
-      gfx.moveTo(
-        this.startX + nx * arrowLen * t0,
-        this.startY + ny * arrowLen * t0,
-      );
-      gfx.lineTo(
-        this.startX + nx * arrowLen * t1,
-        this.startY + ny * arrowLen * t1,
-      );
-      gfx.strokePath();
+    // ── 1. LASER BEAM — outer glow (wide, semi-transparent) ──────────────────
+    gfx.lineStyle(8, baseColor, alpha * 0.15);
+    gfx.beginPath();
+    gfx.moveTo(this.startX, this.startY);
+    gfx.lineTo(this.startX + nx * arrowLen, this.startY + ny * arrowLen);
+    gfx.strokePath();
+
+    // ── 2. LASER BEAM — mid glow ──────────────────────────────────────────────
+    gfx.lineStyle(4, baseColor, alpha * 0.35);
+    gfx.beginPath();
+    gfx.moveTo(this.startX, this.startY);
+    gfx.lineTo(this.startX + nx * arrowLen, this.startY + ny * arrowLen);
+    gfx.strokePath();
+
+    // ── 3. LASER BEAM — core (thin, bright) ──────────────────────────────────
+    gfx.lineStyle(1.5, 0xffffff, alpha * 0.9);
+    gfx.beginPath();
+    gfx.moveTo(this.startX, this.startY);
+    gfx.lineTo(this.startX + nx * arrowLen, this.startY + ny * arrowLen);
+    gfx.strokePath();
+
+    // ── 4. ENERGY SEGMENTS — pulsing dashes along beam ───────────────────────
+    const segCount = Math.floor(3 + charge * 5);
+    for (let i = 0; i < segCount; i++) {
+      const t = (i / segCount) * 0.85 + 0.05;
+      const sx = this.startX + nx * arrowLen * t;
+      const sy = this.startY + ny * arrowLen * t;
+      const segAlpha = alpha * (0.3 + (1 - t) * 0.4);
+      const segR = 1.5 + charge * 2;
+      gfx.fillStyle(0xffffff, segAlpha);
+      gfx.fillCircle(sx, sy, segR);
     }
 
-    // Arrowhead
+    // ── 5. ARROWHEAD — diamond tip ────────────────────────────────────────────
     const tipX = this.startX + nx * arrowLen;
     const tipY = this.startY + ny * arrowLen;
-    const headSize = 10 + charge * 8;
-    gfx.fillStyle(color, alpha);
+    const headSize = 12 + charge * 10;
+    const px = -ny; // perpendicular
+    const py = nx;
+
+    // Outer glow around tip
+    gfx.fillStyle(baseColor, alpha * 0.3);
+    gfx.fillCircle(tipX, tipY, headSize * 1.4);
+
+    // Diamond arrowhead
+    gfx.fillStyle(baseColor, alpha);
     gfx.fillTriangle(
       tipX, tipY,
-      tipX - nx * headSize + ny * headSize * 0.5,
-      tipY - ny * headSize - nx * headSize * 0.5,
-      tipX - nx * headSize - ny * headSize * 0.5,
-      tipY - ny * headSize + nx * headSize * 0.5,
+      tipX - nx * headSize + px * headSize * 0.45,
+      tipY - ny * headSize + py * headSize * 0.45,
+      tipX - nx * headSize - px * headSize * 0.45,
+      tipY - ny * headSize - py * headSize * 0.45,
+    );
+    // Bright core of arrowhead
+    gfx.fillStyle(0xffffff, alpha * 0.7);
+    gfx.fillTriangle(
+      tipX, tipY,
+      tipX - nx * headSize * 0.5 + px * headSize * 0.2,
+      tipY - ny * headSize * 0.5 + py * headSize * 0.2,
+      tipX - nx * headSize * 0.5 - px * headSize * 0.2,
+      tipY - ny * headSize * 0.5 - py * headSize * 0.2,
     );
 
-    // Charge ring around touch origin
-    const ringRadius = 20 + charge * 30;
-    gfx.lineStyle(2, color, alpha * 0.6);
-    gfx.strokeCircle(this.startX, this.startY, ringRadius);
+    // ── 6. CHARGE RING — concentric rings at origin ───────────────────────────
+    const ringR1 = 18 + charge * 22;
+    const ringR2 = ringR1 + 5 + charge * 8;
+
+    // Outer glow ring
+    gfx.lineStyle(4, baseColor, alpha * 0.2);
+    gfx.strokeCircle(this.startX, this.startY, ringR2);
+
+    // Inner ring
+    gfx.lineStyle(2, baseColor, alpha * 0.7);
+    gfx.strokeCircle(this.startX, this.startY, ringR1);
+
+    // Crosshair lines on ring
+    const crossLen = 6 + charge * 4;
+    gfx.lineStyle(1.5, 0xffffff, alpha * 0.8);
+    // top
+    gfx.lineBetween(this.startX, this.startY - ringR1 - crossLen, this.startX, this.startY - ringR1 + crossLen * 0.3);
+    // bottom
+    gfx.lineBetween(this.startX, this.startY + ringR1 - crossLen * 0.3, this.startX, this.startY + ringR1 + crossLen);
+    // left
+    gfx.lineBetween(this.startX - ringR1 - crossLen, this.startY, this.startX - ringR1 + crossLen * 0.3, this.startY);
+    // right
+    gfx.lineBetween(this.startX + ringR1 - crossLen * 0.3, this.startY, this.startX + ringR1 + crossLen, this.startY);
+
+    // Center dot
+    gfx.fillStyle(baseColor, alpha);
+    gfx.fillCircle(this.startX, this.startY, 3 + charge * 3);
+
+    // Full charge flash: white pulse at 100%
+    if (charge >= 0.95) {
+      gfx.fillStyle(0xffffff, 0.15);
+      gfx.fillCircle(this.startX, this.startY, ringR2 * 1.5);
+    }
   }
 
   // ── Helpers ─────────────────────────────────────────────────────────────────

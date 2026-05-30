@@ -31,5 +31,10 @@ app-tutorial {
   right: 0;
   bottom: 0;
   pointer-events: none;
+  z-index: 10;
+}
+
+.game-overlay-active .phaser-container canvas {
+  pointer-events: none !important;
 }
 

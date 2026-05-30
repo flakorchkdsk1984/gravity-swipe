@@ -22,6 +22,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private game: any = null;
   showTutorial = false;
+  isGameOver = false;
   private stateSub!: Subscription;
 
   constructor(
@@ -34,6 +35,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameState.init();
     this.stateSub = this.gameState.state$.subscribe(s => {
       this.showTutorial = s.showTutorial;
+      this.isGameOver = s.isGameOver;
       this.cdr.markForCheck();
     });
   }

@@ -1,5 +1,17 @@
 # Registro de Cambios
 
+## [0.0.6-beta] — 2026-05-30
+
+### Corregido
+- **Botones overlay no funcionaban**: canvas Phaser ya no intercepta clicks cuando el overlay está activo (`pointer-events: none` en canvas al mostrar game-over)
+- **Leaderboard iniciales**: campo de texto con `ngModel`, carga inmediata en `ngOnInit`, sanitización uppercase al guardar
+- **Double-fire en botones**: eliminados handlers `touchend` duplicados
+
+### Agregado
+- **Efecto láser en dash**: haz triple (outer glow + mid + core blanco), segmentos de energía, punta de flecha diamante con glow, anillos concéntricos con crosshair
+- **Colores según poder activo**: el laser, la flecha y los anillos cambian de color al recoger un poder (rojo=velocidad, naranja=escudo, amarillo=score, verde=slow, azul=freeze, morado=ghost, blanco=magnet)
+
+
 Todos los cambios notables de este proyecto serán documentados en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/)

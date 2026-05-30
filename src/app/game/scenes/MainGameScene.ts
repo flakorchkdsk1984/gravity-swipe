@@ -442,10 +442,12 @@ export class MainGameScene extends Phaser.Scene {
     // Power collected / expired → player propulsion
     EventBus.on(GameEvent.POWER_COLLECTED, (p: PowerPayload) => {
       this.player.applyPower(p.type);
+      this.inputManager.setActivePower(p.type);  // ADD
     }, this);
 
     EventBus.on(GameEvent.POWER_EXPIRED, () => {
       this.player.resetPower();
+      this.inputManager.setActivePower(null);  // ADD
     }, this);
   }
 
@@ -509,6 +511,7 @@ export class MainGameScene extends Phaser.Scene {
     // Respawn player (also calls resetPower internally)
     this.player.respawn(W / 2, H - 150);
     this.player.resetPower();
+    this.inputManager.setActivePower(null);
 
     // Reset camera
     this.cameras.main.scrollY = 0;

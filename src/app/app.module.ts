@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
 import { GameUIComponent } from './game/ui/game-ui.component';
@@ -21,6 +22,7 @@ import { GameStateService } from './game/services/game-state.service';
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
+    FormsModule,
   ],
   providers: [GameStateService],
   bootstrap: [AppComponent],
