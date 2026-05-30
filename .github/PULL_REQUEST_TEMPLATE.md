@@ -1,52 +1,98 @@
-## 📝 Descripción
+## 📋 Descripción
 
-_Describe los cambios que introduce este Pull Request. ¿Qué problema resuelve o qué funcionalidad agrega?_
+<!-- Describe los cambios con suficiente detalle para que el reviewer entienda qué, por qué y cómo -->
 
-Closes #<!-- número del issue relacionado -->
+**Tipo de cambio:**
+- [ ] 🐛 `fix` — corrección de bug
+- [ ] ✨ `feat` — nueva funcionalidad
+- [ ] 💄 `style` — cambios de estilo/UI sin lógica
+- [ ] ♻️ `refactor` — refactorización sin nuevas features
+- [ ] ⚡ `perf` — mejora de rendimiento
+- [ ] 🧪 `test` — tests (actualmente no hay, futuro)
+- [ ] 📖 `docs` — documentación únicamente
+- [ ] 🔧 `chore` — tareas de mantenimiento
+- [ ] 🚀 `ci` — cambios en CI/CD
 
----
-
-## 🔧 Tipo de cambio
-
-Marca con una `x` lo que aplique:
-
-- [ ] 🐛 `fix` — Corrección de error
-- [ ] ✨ `feat` — Nueva funcionalidad
-- [ ] 🔨 `refactor` — Refactorización (sin cambio de comportamiento)
-- [ ] ⚡ `perf` — Mejora de rendimiento
-- [ ] 📚 `docs` — Cambios en documentación
-- [ ] 🎨 `style` — Formato, estilo (sin lógica)
-- [ ] 🔧 `chore` — Mantenimiento, dependencias, configuración
-- [ ] 🚀 `ci` — Cambios en CI/CD
+**Issues relacionados:**
+Closes #<!-- número de issue -->
 
 ---
 
-## 🧪 ¿Cómo se ha probado?
+## 🎮 Sistema(s) Afectado(s)
 
-_Describe las pruebas realizadas para verificar los cambios._
-
-- [ ] Probado en navegador de escritorio (Chrome/Firefox)
-- [ ] Probado en dispositivo móvil o emulador (iOS/Android)
-- [ ] Verificado que `npm run build` compila sin errores
-
----
-
-## 📸 Capturas de pantalla (si aplica)
-
-_Añade capturas antes/después si el cambio afecta la interfaz o el gameplay._
-
----
-
-## ✅ Checklist
-
-- [ ] El mensaje de commit sigue la convención [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/).
-- [ ] No se incluyen archivos generados (`dist/`, `node_modules/`).
-- [ ] El código compila sin errores (`npm run build`).
-- [ ] He revisado mi propio código antes de solicitar la revisión.
-- [ ] He actualizado la documentación si fue necesario.
+<!-- Marca todos los que aplican -->
+- [ ] Player / Física
+- [ ] Poderes (PowerManager, PowerObject)
+- [ ] Combo / Score
+- [ ] Level Generator
+- [ ] Partículas / Efectos
+- [ ] Cámara
+- [ ] Audio
+- [ ] HUD / UI (Angular)
+- [ ] MenuScene
+- [ ] MainGameScene
+- [ ] Leaderboard
+- [ ] Timer / FinishLine
+- [ ] GameLogger / Debug
+- [ ] Gobernanza / Documentación
+- [ ] CI/CD / Build
 
 ---
 
-## 📝 Notas para el revisor
+## ✅ Checklist del autor
 
-_¿Hay algo específico en lo que quieras que se centre la revisión?_
+**Código:**
+- [ ] `npx tsc --noEmit` pasa con 0 errores
+- [ ] `npm run build` pasa sin warnings críticos
+- [ ] No hay `console.log` en código de producción (usar `GameLogger`)
+- [ ] No hay números mágicos (usar `GameConfig.ts`)
+- [ ] Métodos públicos tienen tipo de retorno explícito
+- [ ] Los objetos de juego frecuentes usan `ObjectPool`
+- [ ] Los event listeners se limpian en `destroy()`
+
+**Game design:**
+- [ ] Funciona en 390×844px (iPhone 14)
+- [ ] Mantiene 60fps en móvil (sin allocations en `update()`)
+- [ ] La estética visual es consistente (neon, oscuro)
+- [ ] Los nuevos eventos pasan por `EventBus` (no referencias directas entre escenas)
+
+**Documentación:**
+- [ ] Actualicé `CHANGELOG.md` si es un cambio notable
+- [ ] Actualicé `README.md` si se agregó funcionalidad visible
+- [ ] Los comentarios JSDoc están actualizados
+
+---
+
+## 🧪 Pruebas manuales realizadas
+
+<!-- Describe cómo probaste los cambios -->
+
+**Escenarios probados:**
+- [ ] Carga inicial (PreloadScene → MenuScene)
+- [ ] Flujo completo: Menú → Juego → GameOver → Menú
+- [ ] Flujo completo: Menú → Juego → Llegar a la meta → Leaderboard
+- [ ] Colisión con poder y cambio de color/propulsión
+- [ ] Sistema de combo (× múltiples)
+- [ ] GameLogger overlay (tecla backtick)
+- [ ] Sin errores en consola durante juego normal
+
+**Dispositivos / browsers probados:**
+- [ ] Chrome Desktop
+- [ ] Chrome Mobile / DevTools mobile simulator
+- [ ] Safari iOS (si aplica)
+
+---
+
+## 📸 Capturas de pantalla
+
+<!-- Si hay cambios visuales, adjunta antes/después -->
+
+| Antes | Después |
+|-------|---------|
+| | |
+
+---
+
+## ⚠️ Notas para el reviewer
+
+<!-- Áreas de riesgo, decisiones de diseño discutibles, TODOs pendientes -->

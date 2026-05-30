@@ -1,54 +1,115 @@
 ---
 name: 🐛 Reporte de Bug
-about: Reporta un error para ayudarnos a mejorar el juego
-title: "[BUG] "
-labels: bug
-assignees: flakorchkdsk1984
+about: Reporta un bug o comportamiento inesperado en Gravity Swipe
+title: '[BUG] '
+labels: ['bug', 'needs-triage']
+assignees: ''
 ---
 
-## 🐛 Descripción del error
+## 🐛 Descripción del Bug
 
-_Descripción clara y concisa de qué está fallando._
+<!-- Descripción clara y concisa del bug. ¿Qué ocurre? ¿Qué esperabas que ocurriera? -->
+
+**Comportamiento actual:**
+
+**Comportamiento esperado:**
 
 ---
 
-## 📋 Pasos para reproducirlo
+## 📦 Versión del juego
 
-1. Ir a '...'
-2. Hacer clic en '...'
-3. Observar el error
+<!-- Marca la versión en la que encontraste el bug -->
+- [ ] v0.0.3-beta
+- [ ] v0.0.2-beta
+- [ ] Otra: _____
+
+---
+
+## 🔁 Pasos para reproducir
+
+1. 
+2. 
+3. 
+4. 
 
 ---
 
 ## ✅ Comportamiento esperado
 
-_¿Qué debería ocurrir en su lugar?_
+<!-- ¿Qué debería haber pasado? -->
 
 ---
 
 ## ❌ Comportamiento actual
 
-_¿Qué ocurre realmente?_
+<!-- ¿Qué pasó en cambio? -->
 
 ---
 
-## 📸 Capturas de pantalla / Vídeo
+## 📸 Capturas / Vídeo
 
-_Si aplica, añade capturas o un vídeo que ayuden a entender el problema._
+<!-- Si aplica, adjunta capturas de pantalla o una grabación de pantalla que muestren el problema -->
+
+---
+
+## 🪵 Logs del GameLogger
+
+<!-- Para obtener los logs del GameLogger:
+  1. Abre el juego en el navegador
+  2. Presiona la tecla ` (backtick/acento grave) para abrir el overlay del GameLogger
+  3. Reproduce el bug
+  4. Copia todo el texto del overlay y pégalo aquí abajo
+-->
+
+```
+[Pega aquí los logs del GameLogger]
+```
+
+---
+
+## 🖥️ Consola del navegador
+
+<!-- Abre DevTools (F12 → pestaña Console), reproduce el bug y copia cualquier error o advertencia -->
+
+```
+[Pega aquí los errores de la consola del navegador]
+```
 
 ---
 
 ## 🌍 Entorno
 
 | Campo | Valor |
-|-------|-------|
-| Dispositivo | _p. ej. iPhone 14, Samsung S23_ |
-| SO | _p. ej. iOS 17, Android 14_ |
-| Navegador | _p. ej. Safari 17, Chrome 120_ |
-| Versión del juego | 0.0.1-beta |
+|---|---|
+| Versión del juego | [0.0.3-beta] |
+| Navegador | [Chrome 125 / Safari 17 / Firefox 126] |
+| Versión navegador | [] |
+| Sistema operativo | [Windows 11 / macOS 14 / Android 14 / iOS 17] |
+| Dispositivo | [Desktop / iPhone 14 / Samsung Galaxy S24] |
+| Resolución pantalla | [] |
+| ¿Dispositivo táctil? | [Sí / No] |
+| Renderer Phaser | [WebGL / Canvas] |
 
 ---
 
-## 📝 Contexto adicional
+## 🔄 ¿Puedes reproducirlo consistentemente?
 
-_Cualquier otra información relevante sobre el problema._
+<!-- Marca una opción -->
+- [ ] Siempre
+- [ ] A veces (aproximadamente ___% de las veces)
+- [ ] Solo una vez
+
+---
+
+## 💬 Contexto adicional
+
+<!-- Cualquier otra información que consideres relevante: configuración especial, pasos previos, etc. -->
+
+---
+
+## ✔️ Checklist pre-reporte
+
+- [ ] He buscado en los issues existentes y no encontré duplicados
+- [ ] He reproducido el bug en la versión más reciente (0.0.3-beta)
+- [ ] Incluí los logs del GameLogger (si aplica)
+- [ ] Incluí los errores de la consola del navegador (si aplica)

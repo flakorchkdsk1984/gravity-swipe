@@ -1,48 +1,97 @@
 ---
-name: 💡 Solicitud de Característica
-about: Sugiere una nueva idea o mejora para el juego
-title: "[FEAT] "
-labels: enhancement
-assignees: flakorchkdsk1984
+name: 💡 Solicitud de Feature
+about: Propón una nueva funcionalidad o mejora para Gravity Swipe
+title: '[FEAT] '
+labels: ['enhancement', 'needs-discussion']
+assignees: ''
 ---
 
-## 💡 Descripción de la característica
+## 🎯 ¿A qué sistema del juego afecta?
 
-_Descripción clara y concisa de la funcionalidad que propones._
-
----
-
-## 🧩 Problema que resuelve
-
-_¿Qué problema o limitación actual motiva esta solicitud?_  
-_Ejemplo: "Me resulta frustrante cuando [...]"_
-
----
-
-## 🚀 Solución propuesta
-
-_¿Cómo funcionaría la nueva característica? Describe el comportamiento esperado._
-
----
-
-## 🔄 Alternativas consideradas
-
-_¿Has considerado otras formas de solucionar el problema? ¿Por qué descartaste las alternativas?_
+<!-- Marca todos los que aplican -->
+- [ ] Sistema de físicas (Player)
+- [ ] Sistema de poderes / colores
+- [ ] Sistema de combo
+- [ ] Sistema de puntuación
+- [ ] Sistema de partículas
+- [ ] Generación de niveles (LevelGenerator)
+- [ ] Línea de meta / Timer
+- [ ] Mini-mapa
+- [ ] Tabla de récords (Leaderboard)
+- [ ] Menú de inicio (MenuScene)
+- [ ] Sonido / Música
+- [ ] Interfaz de usuario (HUD)
+- [ ] Sistema de Debug (GameLogger)
+- [ ] Otro: _____
 
 ---
 
-## 🎮 Impacto en el gameplay
+## 💡 Descripción del feature
 
-_¿Cómo afectaría esta característica a la experiencia de juego?_
-
-- [ ] Mejora la jugabilidad
-- [ ] Mejora el rendimiento
-- [ ] Mejora la accesibilidad
-- [ ] Mejora la experiencia visual/sonora
-- [ ] Otro: ___________
+<!-- ¿En qué consiste exactamente? Descríbelo con todo el detalle posible -->
 
 ---
 
-## 📝 Contexto adicional
+## 🧩 Problema que resuelve / Motivación
 
-_Capturas de pantalla, bocetos, referencias de otros juegos, o cualquier información adicional._
+<!-- ¿Por qué es necesario? ¿Qué pain point del jugador o del desarrollo resuelve? -->
+
+---
+
+## 🔧 Propuesta de implementación
+
+<!-- Opcional pero muy útil. Describe el enfoque técnico que imaginas: -->
+
+**Archivos a modificar:**
+-
+
+**¿Se necesitan nuevos sistemas o servicios?**
+
+**¿Requiere cambios en la UI?**
+
+---
+
+## 🔀 Alternativas consideradas
+
+<!-- ¿Evaluaste otros enfoques? ¿Por qué propones este y no otro? -->
+
+---
+
+## 🖼️ Maquetas / Referencias visuales
+
+<!-- Adjunta capturas, bocetos, o links a juegos similares que sirvan de referencia -->
+
+---
+
+## ⚡ Impacto en rendimiento
+
+<!-- ¿Esta feature podría ser costosa computacionalmente? ¿Cómo garantizamos 60fps en móvil? -->
+
+---
+
+## 📊 Prioridad sugerida
+
+<!-- Marca una opción -->
+- [ ] Crítica
+- [ ] Alta
+- [ ] Media
+- [ ] Baja
+- [ ] Nice-to-have
+
+---
+
+## 🙋 ¿Estarías dispuesto a implementarlo tú?
+
+<!-- Marca una opción -->
+- [ ] Sí, puedo hacer un PR
+- [ ] Necesito ayuda pero puedo colaborar
+- [ ] No, pero lo propongo para que alguien más lo implemente
+
+---
+
+## ✔️ Checklist pre-envío
+
+- [ ] Busqué features similares en issues existentes
+- [ ] Esta feature mantiene el foco mobile-first del juego
+- [ ] Consideré el impacto en rendimiento (60fps en móvil)
+- [ ] La feature es consistente con la estética neon del juego

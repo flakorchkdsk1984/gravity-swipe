@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: 🚀 Build & Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,23 +14,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout del repositorio
+      - name: 📥 Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: 🟢 Configurar Node.js 18
+      - name: 🔧 Setup Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: 📦 Instalar dependencias
-        run: npm ci
+      - name: 📦 Install dependencies
+        run: npm ci --prefer-offline
 
-      - name: 🔨 Build de producción
-        run: npx ng build --base-href /gravity-swipe/
+      - name: 🔍 TypeScript check
+        run: npx tsc --noEmit
 
-      - name: 🚀 Desplegar en GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: 🏗️ Build production
+        run: npm run build -- --base-href /gravity-swipe/
+
+      - name: 🔎 Verify build output
+        run: |
+          echo "Build output:"
+          ls -la dist/gravity-swipe/
+          test -f dist/gravity-swipe/index.html && echo "✅ index.html found" || (echo "❌ index.html missing" && exit 1)
+
+      - name: 🌐 Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/gravity-swipe/browser
+          folder: dist/gravity-swipe
+          branch: gh-pages
+          clean: true
+          commit-message: 'deploy: 🚀 ${{ github.event.head_commit.message }}'
+
+      - name: ✅ Deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: https://flakorchkdsk1984.github.io/gravity-swipe/" >> $GITHUB_STEP_SUMMARY

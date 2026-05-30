@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Preguntas y Discusión
+    url: https://github.com/flakorchkdsk1984/gravity-swipe/discussions
+    about: Para preguntas generales, ideas y discusión de diseño
+  - name: 🎮 Demo en vivo
+    url: https://flakorchkdsk1984.github.io/gravity-swipe/
+    about: Prueba el juego antes de reportar bugs
+  - name: 📖 Documentación
+    url: https://github.com/flakorchkdsk1984/gravity-swipe#readme
+    about: Lee el README completo con arquitectura y guía de contribución
