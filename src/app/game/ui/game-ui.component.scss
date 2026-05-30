@@ -104,3 +104,100 @@
     animation: near-miss-flash 0.3s ease-out forwards;
   }
 }
+
+// ── Minimap ──────────────────────────────────────────────────
+.minimap {
+  position: absolute;
+  top: 14px;
+  right: 10px;
+  width: 50px;
+  height: 120px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.minimap-finish {
+  font-size: 11px;
+  color: gold;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.minimap-start {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.minimap-track-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 2px 0;
+}
+
+.minimap-track {
+  width: 1px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.minimap-player {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ffff;
+  box-shadow: 0 0 6px 2px rgba(0, 255, 255, 0.8);
+}
+
+.minimap-pct {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+// ── Power badges ─────────────────────────────────────────────
+.power-badges {
+  position: absolute;
+  top: 52px;
+  right: 70px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 140px;
+  pointer-events: none;
+}
+
+.power-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+  color: #000;
+  background: #ffffff;
+}
+
+// Power-type color overrides
+.power-speed_boost  { background: #ff2244; color: #fff; }
+.power-shield       { background: #ff8800; color: #000; }
+.power-score_x2     { background: #ffdd00; color: #000; }
+.power-slow_extend  { background: #00cc44; color: #000; }
+.power-freeze       { background: #00aaff; color: #000; }
+.power-ghost        { background: #cc44ff; color: #fff; }
+.power-magnet       { background: #cccccc; color: #000; }

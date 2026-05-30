@@ -1,20 +1,80 @@
 <div class="game-over" *ngIf="visible" [@slideIn]>
-  <h1 class="title">GAME OVER</h1>
 
-  <div class="score-block">
-    <div class="label">SCORE</div>
-    <div class="value">{{ state.finalScore | number }}</div>
-  </div>
+  <!-- Stage Complete path -->
+  <ng-container *ngIf="state.stageCompleted; else gameOverBlock">
+    <h1 class="title stage-complete">🏁 STAGE COMPLETE!</h1>
 
-  <div class="score-block" *ngIf="state.maxCombo > 0">
-    <div class="label">MAX COMBO</div>
-    <div class="value">x{{ state.maxCombo }}</div>
-  </div>
+    <div class="score-block">
+      <div class="label">TIME</div>
+      <div class="value time-value">{{ formatTime(state.finishTimeMs) }}</div>
+    </div>
 
-  <div class="score-block best" *ngIf="state.finalScore >= state.bestScore && state.finalScore > 0">
-    <div class="label">🏆 NEW BEST!</div>
-    <div class="value">{{ state.bestScore | number }}</div>
-  </div>
+    <div class="score-block" *ngIf="state.finalScore > 0">
+      <div class="label">SCORE</div>
+      <div class="value">{{ state.finalScore | number }}</div>
+    </div>
+
+    <div class="score-block best" *ngIf="isNewBest()">
+      <div class="label">⭐ NEW BEST!</div>
+    </div>
+
+    <!-- Emoji selector (only before saving) -->
+    <ng-container *ngIf="!timeSaved">
+      <div class="emoji-section">
+        <div class="emoji-title">CHOOSE YOUR AVATAR</div>
+        <div class="emoji-grid">
+          <button
+            *ngFor="let e of EMOJI_OPTIONS"
+            class="emoji-btn"
+            [class.selected]="e === selectedEmoji"
+            (click)="onEmojiSelect(e)"
+            (touchend)="onEmojiSelect(e)"
+          >{{ e }}</button>
+        </div>
+        <button class="save-btn" (click)="onSaveTime()" (touchend)="onSaveTime()">
+          SAVE TIME
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard" *ngIf="leaderboardEntries.length > 0">
+      <div class="lb-title">LEADERBOARD</div>
+      <div
+        *ngFor="let entry of leaderboardEntries; let i = index"
+        class="leaderboard-entry"
+        [class.rank-1]="i === 0"
+        [class.rank-2]="i === 1"
+        [class.rank-3]="i === 2"
+        [class.current-entry]="timeSaved && entry.emoji === selectedEmoji && entry.timeMs === state.finishTimeMs"
+      >
+        <span class="lb-rank">#{{ i + 1 }}</span>
+        <span class="lb-emoji">{{ entry.emoji }}</span>
+        <span class="lb-time">{{ formatTime(entry.timeMs) }}</span>
+        <span class="lb-score">{{ entry.score | number }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Normal Game Over path -->
+  <ng-template #gameOverBlock>
+    <h1 class="title">GAME OVER</h1>
+
+    <div class="score-block">
+      <div class="label">SCORE</div>
+      <div class="value">{{ state.finalScore | number }}</div>
+    </div>
+
+    <div class="score-block" *ngIf="state.maxCombo > 0">
+      <div class="label">MAX COMBO</div>
+      <div class="value">x{{ state.maxCombo }}</div>
+    </div>
+
+    <div class="score-block best" *ngIf="state.finalScore >= state.bestScore && state.finalScore > 0">
+      <div class="label">🏆 NEW BEST!</div>
+      <div class="value">{{ state.bestScore | number }}</div>
+    </div>
+  </ng-template>
 
   <button class="restart-btn" (click)="onRestart()" (touchend)="onRestart()">
     TAP TO RETRY
