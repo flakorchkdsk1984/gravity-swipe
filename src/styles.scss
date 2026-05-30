@@ -26,3 +26,10 @@ app-root {
   height: 100%;
   position: relative;
 }
+
+/* ── Critical: disable Phaser canvas pointer events when overlay is active ── */
+/* Must live in global styles — Angular scoped CSS adds [_ngcontent] which    */
+/* Phaser-created canvas elements don't have, making the rule ineffective.    */
+.game-overlay-active .phaser-container canvas {
+  pointer-events: none !important;
+}

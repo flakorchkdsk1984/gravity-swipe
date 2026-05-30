@@ -157,28 +157,44 @@ class GameLoggerImpl {
   // ── On-screen overlay ──────────────────────────────────────────────────────
 
   private _buildOverlay(): void {
+    // ── Log panel ─────────────────────────────────────────────────────────────
     const el = document.createElement('div');
     el.id = 'gs-logger-overlay';
     Object.assign(el.style, {
-      position:   'fixed',
-      top:        '8px',
-      left:       '8px',
-      zIndex:     '9999',
-      background: 'rgba(0,0,0,0.75)',
-      padding:    '6px 10px',
-      borderRadius: '4px',
-      fontFamily: 'monospace',
-      fontSize:   '11px',
-      lineHeight: '1.5',
-      maxWidth:   '480px',
-      wordBreak:  'break-all',
-      display:    'none',
-      pointerEvents: 'none',
+      position:      'fixed',
+      top:           '48px',
+      left:          '4px',
+      right:         '4px',
+      zIndex:        '99999',
+      background:    'rgba(0,0,0,0.88)',
+      border:        '1px solid #0ff4',
+      padding:       '6px 10px 8px',
+      borderRadius:  '6px',
+      fontFamily:    'monospace',
+      fontSize:      '11px',
+      lineHeight:    '1.5',
+      maxHeight:     '55vh',
+      overflowY:     'auto',
+      wordBreak:     'break-all',
+      display:       'none',
+      pointerEvents: 'auto',
     });
 
     const header = document.createElement('div');
-    Object.assign(header.style, { color: '#fff', marginBottom: '4px', fontWeight: 'bold' });
-    header.textContent = '── GravitySwipe Log ──';
+    Object.assign(header.style, {
+      color: '#0ff', marginBottom: '4px', fontWeight: 'bold',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    });
+    header.innerHTML = '<span>🪲 GravitySwipe Log</span>';
+
+    const clearBtn = document.createElement('button');
+    clearBtn.textContent = 'CLEAR';
+    Object.assign(clearBtn.style, {
+      background: 'transparent', border: '1px solid #f44', color: '#f44',
+      fontSize: '10px', padding: '1px 6px', cursor: 'pointer', borderRadius: '3px',
+    });
+    clearBtn.addEventListener('click', () => this.clear());
+    header.appendChild(clearBtn);
     el.appendChild(header);
 
     const list = document.createElement('div');
@@ -187,6 +203,41 @@ class GameLoggerImpl {
     document.body.appendChild(el);
     this.overlay     = el;
     this.overlayList = list;
+
+    // ── Toggle button — always visible, tap to open/close ─────────────────────
+    const btn = document.createElement('button');
+    btn.id = 'gs-logger-toggle';
+    btn.textContent = '🪲';
+    Object.assign(btn.style, {
+      position:     'fixed',
+      top:          '4px',
+      left:         '4px',
+      zIndex:       '100000',
+      width:        '36px',
+      height:       '36px',
+      borderRadius: '50%',
+      background:   'rgba(0,0,0,0.7)',
+      border:       '1px solid #0ff4',
+      color:        '#fff',
+      fontSize:     '18px',
+      lineHeight:   '36px',
+      textAlign:    'center',
+      cursor:       'pointer',
+      pointerEvents:'auto',
+      padding:      '0',
+      userSelect:   'none',
+      touchAction:  'manipulation',
+    });
+    btn.addEventListener('click', () => this._toggleOverlay());
+    document.body.appendChild(btn);
+  }
+
+  private _toggleOverlay(): void {
+    this.overlayVisible = !this.overlayVisible;
+    if (this.overlay) {
+      this.overlay.style.display = this.overlayVisible ? 'block' : 'none';
+    }
+    if (this.overlayVisible) this._refreshOverlay();
   }
 
   private _refreshOverlay(): void {
@@ -204,17 +255,14 @@ class GameLoggerImpl {
       row.textContent = `[${ts}][${entry.tag}] ${lbl} ${entry.message}`;
       this.overlayList.appendChild(row);
     }
+
+    // Auto-scroll to bottom
+    this.overlayList.scrollTop = this.overlayList.scrollHeight;
   }
 
   private _listenBacktick(): void {
     window.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === '`') {
-        this.overlayVisible = !this.overlayVisible;
-        if (this.overlay) {
-          this.overlay.style.display = this.overlayVisible ? 'block' : 'none';
-        }
-        if (this.overlayVisible) this._refreshOverlay();
-      }
+      if (e.key === '`') this._toggleOverlay();
     });
   }
 
