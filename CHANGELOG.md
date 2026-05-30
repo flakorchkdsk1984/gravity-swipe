@@ -13,6 +13,30 @@ _Próximos cambios pendientes de lanzamiento._
 
 ---
 
+## [0.0.2-beta] - 2026-05-30
+
+### Añadido
+- **Línea de meta** — franja arcoíris al final del nivel (18 chunks / Y=-10800) con texto "FINISH" animado
+- **Cronómetro** — contador `MM:SS.cc` en el HUD que mide el tiempo hasta la meta
+- **Mini-mapa** — panel superior derecho con posición del jugador, distancia al final y % completado
+- **Sistema de 7 poderes de color** — objetos flotantes con efecto pulsante:
+  - 🔴 Rojo: ⚡ SPEED — dash 1.5× más rápido (5s)
+  - 🟠 Naranja: 🛡 SHIELD — absorbe el próximo golpe mortal
+  - 🟡 Amarillo: ✨ ×2 SCORE — doble puntaje (10s)
+  - 🟢 Verde: 🌀 SLOW-MO — cámara lenta extendida (4s)
+  - 🔵 Azul: ❄️ FREEZE — congela obstáculos (3s)
+  - 🟣 Morado: 👻 GHOST — atraviesa obstáculos (4s)
+  - ⚪ Blanco: 🧲 MAGNET — atrae power objects al centro (6s)
+- **Leaderboard de mejores tiempos** — top 10 guardado en localStorage con medallas 🥇🥈🥉
+- **Selector de avatar emoji** — elige tu marca al completar una etapa (😀😎🦊🐉🚀🌟💎⚡🔥👾🤖🏆)
+- **Badges de poderes activos** — indicadores de color en el HUD durante la partida
+- **GameLogger** — sistema de debug con overlay (tecla `` ` ``), niveles DEBUG/INFO/WARN/ERROR y captura global de errores
+
+### Corregido
+- Error `TypeError: Cannot read properties of undefined (reading 'contains')` al activar slow-motion (Phaser 3.90 `deathZone: undefined` en ParticleEmitter)
+
+---
+
 ## [0.0.1-beta] - 2026-05-29
 
 ### Agregado
