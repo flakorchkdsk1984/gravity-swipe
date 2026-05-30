@@ -19,8 +19,13 @@ import {
   EnemyConfig, EnemyType,
   HitPayload, ComboPayload, ScorePayload,
   GameOverPayload,
+  PowerType, PowerConfig, StageFinishPayload,
 } from '../config/types';
-import { GAME_CONFIG, COLORS } from '../config/GameConfig';
+import { GAME_CONFIG, COLORS, FINISH_Y, FINISH_CHUNKS, POWER_COLORS } from '../config/GameConfig';
+import { PowerObject }   from '../objects/PowerObject';
+import { PowerManager }  from '../systems/PowerManager';
+import { FinishLine }    from '../systems/FinishLine';
+import { TimerManager }  from '../systems/TimerManager';
 
 const W = GAME_CONFIG.width;
 const H = GAME_CONFIG.height;
@@ -42,10 +47,18 @@ export class MainGameScene extends Phaser.Scene {
   // Pools
   private obstaclePool!: ObjectPool<Obstacle>;
   private enemyPool!:    ObjectPool<Enemy>;
+  private powerPool!:    ObjectPool<PowerObject>;
 
   // Groups for physics
   private obstacleGroup!: Phaser.Physics.Arcade.Group;
   private enemyGroup!:    Phaser.Physics.Arcade.Group;
+  private powerGroup!:    Phaser.Physics.Arcade.Group;
+
+  // Power / finish / timer systems
+  private powerManager!:  PowerManager;
+  private finishLine!:    FinishLine;
+  private timerManager!:  TimerManager;
+  private stageCompleted = false;
 
   // Background
   private bgGraphics!: Phaser.GameObjects.Graphics;
@@ -82,6 +95,7 @@ export class MainGameScene extends Phaser.Scene {
     // ── Pools + groups ──────────────────────────────────────────────────────
     this.obstacleGroup = this.physics.add.group({ runChildUpdate: false });
     this.enemyGroup    = this.physics.add.group({ runChildUpdate: false });
+    this.powerGroup    = this.physics.add.group({ runChildUpdate: false });
 
     this.obstaclePool = new ObjectPool<Obstacle>(
       this,
@@ -107,6 +121,18 @@ export class MainGameScene extends Phaser.Scene {
       10,
     );
 
+    this.powerPool = new ObjectPool<PowerObject>(
+      this,
+      () => {
+        const types = Object.values(PowerType);
+        const t = types[Math.floor(Math.random() * types.length)];
+        const po = new PowerObject(this, { type: t as PowerType, x: -999, y: -999 });
+        this.powerGroup.add(po);
+        return po;
+      },
+      14,
+    );
+
     // ── Player ──────────────────────────────────────────────────────────────
     this.player = new Player(this, W / 2, H - 150);
 
@@ -123,7 +149,26 @@ export class MainGameScene extends Phaser.Scene {
     this.cameraManager   = new CameraManager(this);
     this.cameraManager.init(this.player);
 
-    this.levelGen = new LevelGenerator(this, this.obstaclePool, this.enemyPool);
+    this.levelGen = new LevelGenerator(this, this.obstaclePool, this.enemyPool, this.powerPool);
+
+    // ── Power / Finish / Timer systems ──────────────────────────────────────
+    this.powerManager = new PowerManager(this);
+    this.finishLine   = new FinishLine(this);
+    this.timerManager = new TimerManager();
+    this.timerManager.start();
+    this.stageCompleted = false;
+
+    // Physics overlap: player ↔ power objects
+    this.physics.add.overlap(
+      this.player,
+      this.powerGroup,
+      (_player, powerObj) => {
+        const po = powerObj as PowerObject;
+        if ((po as any)._active) {
+          po.activate();
+        }
+      },
+    );
 
     // ── Event Listeners ──────────────────────────────────────────────────────
     this._bindEvents();
@@ -176,6 +221,41 @@ export class MainGameScene extends Phaser.Scene {
     // Level generation — follow player upward
     this.levelGen.update(this.player.y);
 
+    // Timer
+    this.timerManager.update();
+
+    // Power bobs
+    for (const po of this.powerPool.getActive()) {
+      po.update(delta);
+    }
+
+    // PowerManager freeze: stop obstacle movement when freeze active
+    if (this.powerManager.isFreezeActive) {
+      for (const obs of this.obstaclePool.getActive()) {
+        (obs.body as Phaser.Physics.Arcade.Body).setVelocity(0, 0);
+      }
+    }
+
+    // PowerManager magnet: pull power objects toward center
+    if (this.powerManager.isMagnetActive) {
+      const cx = W / 2;
+      for (const po of this.powerPool.getActive()) {
+        const dx = cx - po.x;
+        po.x += dx * 0.03;
+      }
+    }
+
+    // Emit level progress for minimap
+    const totalDist = Math.abs(FINISH_Y - (H - 150));
+    const traveled  = Math.abs(this.player.y - (H - 150));
+    const progress  = Math.min(1, traveled / totalDist);
+    window.dispatchEvent(new CustomEvent('gs:' + GameEvent.LEVEL_PROGRESS, { detail: { progress } }));
+
+    // Check finish line
+    if (!this.stageCompleted && this.finishLine.checkPlayerReached(this.player.y, 18)) {
+      this._handleStageComplete();
+    }
+
     // Survival score
     this.scoreManager.addSurvivalScore(delta);
 
@@ -202,7 +282,7 @@ export class MainGameScene extends Phaser.Scene {
 
     EventBus.on(GameEvent.OBSTACLE_DESTROY, (p: { position: { x:number; y:number }; pointValue: number }) => {
       this.comboSystem.onHit(p.position);
-      this.scoreManager.addDestroyScore(p.pointValue, p.position, this.comboSystem.getMultiplier());
+      this.scoreManager.addDestroyScore(p.pointValue, p.position, this.comboSystem.getMultiplier() * this.powerManager.scoreMultiplierBonus);
       this.particleManager.emitDestroy(p.position.x, p.position.y, 'obstacle', COLORS.obstacle);
       this.particleManager.emitShockwave(p.position.x, p.position.y, 80);
       EventBus.emit(GameEvent.SCREEN_SHAKE, { intensity: 5, duration: 250 });
@@ -216,7 +296,7 @@ export class MainGameScene extends Phaser.Scene {
 
     EventBus.on(GameEvent.ENEMY_DESTROY, (p: { position: { x:number; y:number }; pointValue: number }) => {
       this.comboSystem.onHit(p.position);
-      this.scoreManager.addDestroyScore(p.pointValue, p.position, this.comboSystem.getMultiplier());
+      this.scoreManager.addDestroyScore(p.pointValue, p.position, this.comboSystem.getMultiplier() * this.powerManager.scoreMultiplierBonus);
       this.particleManager.emitDestroy(p.position.x, p.position.y, 'enemy', COLORS.enemy);
       this.particleManager.emitShockwave(p.position.x, p.position.y, 60);
       EventBus.emit(GameEvent.SCREEN_SHAKE, { intensity: 4, duration: 200 });
@@ -248,9 +328,35 @@ export class MainGameScene extends Phaser.Scene {
       this.particleManager.emitDash(p.position.x, p.position.y, p.direction.x, p.direction.y, p.chargeLevel);
     }, this);
 
-    // Death
-    EventBus.on(GameEvent.PLAYER_DIED, this._handleGameOver, this);
+    // Death — check shield first
+    EventBus.on(GameEvent.PLAYER_DIED, () => {
+      if (this.powerManager?.consumeShield()) {
+        EventBus.emit(GameEvent.SCREEN_SHAKE, { intensity: 3, duration: 200 });
+        return;
+      }
+      this._handleGameOver();
+    }, this);
   }
+
+  private _handleStageComplete = (): void => {
+    if (this.stageCompleted) return;
+    this.stageCompleted = true;
+    this.timerManager.finish();
+
+    const payload: StageFinishPayload = {
+      timeMs:   this.timerManager.getElapsedMs(),
+      score:    this.scoreManager.getScore(),
+      maxCombo: this.comboSystem.getCombo(),
+    };
+
+    // Celebrate FX
+    this.particleManager.emitShockwave(this.player.x, this.player.y, 120);
+    EventBus.emit(GameEvent.SCREEN_SHAKE, { intensity: 8, duration: 600 });
+
+    this.time.delayedCall(800, () => {
+      EventBus.emit(GameEvent.STAGE_FINISH, payload);
+    });
+  };
 
   // ── Game Over ─────────────────────────────────────────────────────────────
 
@@ -281,6 +387,11 @@ export class MainGameScene extends Phaser.Scene {
     this.levelGen.reset();
     this.obstaclePool.releaseAll();
     this.enemyPool.releaseAll();
+    this.powerManager.reset();
+    this.powerPool.releaseAll();
+    this.timerManager.reset();
+    this.timerManager.start();
+    this.stageCompleted = false;
 
     // Respawn player
     this.player.respawn(W / 2, H - 150);
@@ -327,8 +438,11 @@ export class MainGameScene extends Phaser.Scene {
   shutdown(): void {
     window.removeEventListener('gs:ui:restart', this._handleRestart as EventListener);
     EventBus.removeAllListeners();
+    this.powerManager?.destroy();
+    this.finishLine?.destroy();
     this.obstaclePool?.destroy();
     this.enemyPool?.destroy();
+    this.powerPool?.destroy();
     this.inputManager?.destroy();
     this.cameraManager?.destroy();
     this.particleManager?.destroy();

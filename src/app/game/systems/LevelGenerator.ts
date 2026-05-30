@@ -4,12 +4,14 @@ import {
   LevelChunk,
   ObstacleConfig, ObstacleType,
   EnemyConfig,    EnemyType,
+  PowerConfig,    PowerType,
 } from '../config/types';
 import { GAME_CONFIG } from '../config/GameConfig';
 import { EventBus } from './EventBus';
 import { ObjectPool } from './ObjectPool';
 import { Obstacle } from '../objects/Obstacle';
 import { Enemy } from '../objects/Enemy';
+import { PowerObject } from '../objects/PowerObject';
 
 /** Layout pattern identifiers. */
 type Pattern = 'A' | 'B' | 'C' | 'D' | 'E';
@@ -18,6 +20,7 @@ interface ChunkData {
   chunk: LevelChunk;
   obstacles: Obstacle[];
   enemies: Enemy[];
+  powers: PowerObject[];
 }
 
 /**
@@ -41,6 +44,7 @@ export class LevelGenerator {
   private readonly scene: Phaser.Scene;
   private readonly obstaclePool: ObjectPool<Obstacle>;
   private readonly enemyPool: ObjectPool<Enemy>;
+  private readonly powerPool: ObjectPool<PowerObject>;
 
   private activeChunks   = new Map<number, ChunkData>();
   private spawnedIndices = new Set<number>();
@@ -60,10 +64,12 @@ export class LevelGenerator {
     scene: Phaser.Scene,
     obstaclePool: ObjectPool<Obstacle>,
     enemyPool: ObjectPool<Enemy>,
+    powerPool: ObjectPool<PowerObject>,
   ) {
     this.scene        = scene;
     this.obstaclePool = obstaclePool;
     this.enemyPool    = enemyPool;
+    this.powerPool    = powerPool;
 
     this.chunkH        = GAME_CONFIG.level.chunkHeight;
     this.gameW         = GAME_CONFIG.width;
@@ -100,6 +106,7 @@ export class LevelGenerator {
     for (const data of this.activeChunks.values()) {
       data.obstacles.forEach(o => this.obstaclePool.release(o));
       data.enemies.forEach(e => this.enemyPool.release(e));
+      data.powers.forEach(p => this.powerPool.release(p));
     }
     this.activeChunks.clear();
     this.spawnedIndices.clear();
@@ -111,8 +118,9 @@ export class LevelGenerator {
 
   private _spawnChunk(chunkIndex: number): void {
     const chunk     = this._generateChunk(chunkIndex);
-    const obstacles : Obstacle[] = [];
-    const enemies   : Enemy[]    = [];
+    const obstacles : Obstacle[]    = [];
+    const enemies   : Enemy[]       = [];
+    const powers    : PowerObject[] = [];
 
     for (const cfg of chunk.obstacles) {
       const obs = this.obstaclePool.get();
@@ -123,7 +131,24 @@ export class LevelGenerator {
       if (en) { en.reset(cfg); enemies.push(en); }
     }
 
-    this.activeChunks.set(chunkIndex, { chunk, obstacles, enemies });
+    // Spawn 0–2 power objects per chunk (skip chunk 0 — safe spawn area)
+    if (chunkIndex > 0) {
+      const powerTypes = Object.values(PowerType);
+      const topY = this._chunkTopY(chunkIndex);
+      const numPowers = Math.random() < 0.6 ? 1 : (Math.random() < 0.5 ? 2 : 0);
+      for (let p = 0; p < numPowers; p++) {
+        const po = this.powerPool.get();
+        if (po) {
+          const px = 40 + Math.random() * (this.gameW - 80);
+          const py = topY - 80 - Math.random() * (this.chunkH - 160);
+          const pt = powerTypes[Math.floor(Math.random() * powerTypes.length)] as PowerType;
+          po.reset({ type: pt, x: px, y: py });
+          powers.push(po);
+        }
+      }
+    }
+
+    this.activeChunks.set(chunkIndex, { chunk, obstacles, enemies, powers });
   }
 
   private _generateChunk(index: number): LevelChunk {
@@ -145,6 +170,7 @@ export class LevelGenerator {
       if (index < threshold) {
         data.obstacles.forEach(o => this.obstaclePool.release(o));
         data.enemies.forEach(e => this.enemyPool.release(e));
+        data.powers.forEach(p => this.powerPool.release(p));
         this.activeChunks.delete(index);
       }
     }
