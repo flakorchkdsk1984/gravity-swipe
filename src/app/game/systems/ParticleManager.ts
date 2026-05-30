@@ -349,7 +349,6 @@ export class ParticleManager {
       tint: [0x8888ff, 0x44aaff, 0xffffff],
       blendMode: Phaser.BlendModes.ADD,
       quantity: 24,
-      deathZone: undefined,
       emitting: false,
     });
     emitter.setDepth(8);
