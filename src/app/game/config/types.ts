@@ -73,6 +73,7 @@ export enum GameEvent {
   POWER_COLLECTED  = 'power:collected',
   POWER_EXPIRED    = 'power:expired',
   POWER_ACTIVATED  = 'power:activated',
+  PLAYER_COLOR_CHANGE = 'player:colorChange',
   // Stage
   STAGE_FINISH     = 'stage:finish',
   TIMER_UPDATE     = 'timer:update',
@@ -228,6 +229,18 @@ export interface PowerConfig {
 export interface PowerPayload {
   type: PowerType;
   position: Vec2;
+}
+
+// ── Propulsion Types ──────────────────────────────────────────
+export enum PropulsionType {
+  DEFAULT        = 'default',
+  ROCKET         = 'rocket',
+  BOUNCER        = 'bouncer',
+  LIGHTNING      = 'lightning',
+  GRAVITY_DRIFT  = 'gravity_drift',
+  ICE_GLIDE      = 'ice_glide',
+  PHASE          = 'phase',
+  ORBIT_SHOT     = 'orbit_shot',
 }
 
 // ── Finish / Stage ────────────────────────────────────────────

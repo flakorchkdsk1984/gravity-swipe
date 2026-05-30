@@ -19,7 +19,7 @@ import {
   EnemyConfig, EnemyType,
   HitPayload, ComboPayload, ScorePayload,
   GameOverPayload,
-  PowerType, PowerConfig, StageFinishPayload,
+  PowerType, PowerConfig, PowerPayload, StageFinishPayload,
 } from '../config/types';
 import { GAME_CONFIG, COLORS, FINISH_Y, FINISH_CHUNKS, POWER_COLORS } from '../config/GameConfig';
 import { PowerObject }   from '../objects/PowerObject';
@@ -336,6 +336,15 @@ export class MainGameScene extends Phaser.Scene {
       }
       this._handleGameOver();
     }, this);
+
+    // Power collected / expired → player propulsion
+    EventBus.on(GameEvent.POWER_COLLECTED, (p: PowerPayload) => {
+      this.player.applyPower(p.type);
+    }, this);
+
+    EventBus.on(GameEvent.POWER_EXPIRED, () => {
+      this.player.resetPower();
+    }, this);
   }
 
   private _handleStageComplete = (): void => {
@@ -393,8 +402,9 @@ export class MainGameScene extends Phaser.Scene {
     this.timerManager.start();
     this.stageCompleted = false;
 
-    // Respawn player
+    // Respawn player (also calls resetPower internally)
     this.player.respawn(W / 2, H - 150);
+    this.player.resetPower();
 
     // Reset camera
     this.cameras.main.scrollY = 0;
