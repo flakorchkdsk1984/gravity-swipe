@@ -12,6 +12,7 @@ import { AudioManager }    from '../systems/AudioManager';
 import { ParticleManager } from '../systems/ParticleManager';
 import { CameraManager }   from '../systems/CameraManager';
 import { EventBus }        from '../systems/EventBus';
+import { GameLogger }      from '../systems/GameLogger';
 import {
   GameEvent,
   ObstacleConfig, ObstacleType,
@@ -61,8 +62,11 @@ export class MainGameScene extends Phaser.Scene {
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
   create(): void {
+    try {
     this.isGameOver = false;
     this.startTime  = Date.now();
+    GameLogger.hookScene(this);
+    GameLogger.info('Scene', 'MainGameScene created');
 
     // Set world bounds (very tall to allow infinite scrolling)
     this.physics.world.setBounds(0, -99999, W, 100000 + H);
@@ -135,9 +139,15 @@ export class MainGameScene extends Phaser.Scene {
 
     // Tell Angular game started
     EventBus.emit(GameEvent.GAME_START, {});
+    } catch (e) {
+      GameLogger.error('Scene', 'Error in create', e);
+      throw e;
+    }
   }
 
   override update(time: number, delta: number): void {
+    try {
+    GameLogger.tick();
     if (this.isGameOver) return;
 
     this.cameraManager.update(delta);
@@ -175,6 +185,9 @@ export class MainGameScene extends Phaser.Scene {
     // Difficulty scales with distance traveled upward
     const chunksPassed = Math.floor(-this.player.y / GAME_CONFIG.level.chunkHeight);
     this.levelGen.setDifficulty(chunksPassed * GAME_CONFIG.level.difficultyScalePerChunk);
+    } catch (e) {
+      GameLogger.error('Scene', 'Error in update', e);
+    }
   }
 
   // ── Event Bindings ────────────────────────────────────────────────────────

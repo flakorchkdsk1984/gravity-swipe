@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { GameStateService } from './services/game-state.service';
+import { GameLogger } from './systems/GameLogger';
 
 @Component({
   selector: 'app-game',
@@ -50,6 +51,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async initPhaser(): Promise<void> {
     try {
+      GameLogger.info('Game', 'Phaser game initializing');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const PhaserMod: any = await import('phaser');
       const PhaserLib = PhaserMod.default ?? PhaserMod;
@@ -65,6 +67,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.game = new PhaserLib.Game(config);
     } catch (err) {
+      GameLogger.error('Game', 'Phaser init failed', err);
       console.error('[GameComponent] Phaser init failed:', err);
     }
   }

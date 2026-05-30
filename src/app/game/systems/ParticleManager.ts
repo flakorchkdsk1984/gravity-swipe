@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { EventBus } from './EventBus';
 import { GameEvent, Vec2, DashPayload, HitPayload, ComboPayload } from '../config/types';
 import { COLORS } from '../config/GameConfig';
+import { GameLogger } from './GameLogger';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ParticleManager — all particle effects for Gravity Swipe.
@@ -142,6 +143,7 @@ export class ParticleManager {
    * Backward-facing cone of cyan sparks on dash. Scales with charge level.
    */
   emitDash(x: number, y: number, dirX: number, dirY: number, chargeLevel: number): void {
+    try {
     const count = Math.floor(12 + chargeLevel * 18);
     const speed = 200 + chargeLevel * 400;
 
@@ -163,12 +165,16 @@ export class ParticleManager {
     emitter.explode(count, x, y);
 
     this.scene.time.delayedCall(600, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitDash failed', e);
+    }
   }
 
   /**
    * Ring of white sparks reflecting off surface normal.
    */
   emitBounce(x: number, y: number, normal: Vec2): void {
+    try {
     const baseAngle = Math.atan2(normal.y, normal.x) * (180 / Math.PI);
 
     const emitter = this.scene.add.particles(x, y, this.TEX_DOT, {
@@ -186,12 +192,16 @@ export class ParticleManager {
     emitter.explode(12, x, y);
 
     this.scene.time.delayedCall(500, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitBounce failed', e);
+    }
   }
 
   /**
    * 8–12 colored shards outward. Red for obstacles, orange for enemies.
    */
   emitHit(x: number, y: number, type: 'obstacle' | 'enemy'): void {
+    try {
     const color = type === 'obstacle' ? COLORS.obstacle : COLORS.enemy;
     const count = 8 + Math.floor(Math.random() * 5);
 
@@ -211,12 +221,16 @@ export class ParticleManager {
     emitter.explode(count, x, y);
 
     this.scene.time.delayedCall(550, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitHit failed', e);
+    }
   }
 
   /**
    * Large explosion: 20–30 particles with gravity, long lifespan. Color from object.
    */
   emitDestroy(x: number, y: number, type: 'obstacle' | 'enemy', color: number): void {
+    try {
     const count = 20 + Math.floor(Math.random() * 11);
 
     const emitter = this.scene.add.particles(x, y, this.TEX_GLOW, {
@@ -256,12 +270,16 @@ export class ParticleManager {
       emitter.destroy();
       sparks.destroy();
     });
+    } catch (e) {
+      GameLogger.error('Particles', 'emitDestroy failed', e);
+    }
   }
 
   /**
    * Yellow streak particles along near-miss path.
    */
   emitNearMiss(x: number, y: number): void {
+    try {
     const emitter = this.scene.add.particles(x, y, this.TEX_SPARK, {
       speed: { min: 60, max: 160 },
       angle: { min: 0, max: 360 },
@@ -277,12 +295,16 @@ export class ParticleManager {
     emitter.explode(16, x, y);
 
     this.scene.time.delayedCall(700, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitNearMiss failed', e);
+    }
   }
 
   /**
    * Upward burst of golden particles. Higher combo = more particles.
    */
   emitCombo(x: number, y: number, comboCount: number): void {
+    try {
     const count = Math.min(8 + comboCount * 3, 40);
 
     const emitter = this.scene.add.particles(x, y, this.TEX_GLOW, {
@@ -300,19 +322,27 @@ export class ParticleManager {
     emitter.explode(count, x, y);
 
     this.scene.time.delayedCall(900, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitCombo failed', e);
+    }
   }
 
   /**
    * Single trail dot behind player — call every frame from player update.
    */
   emitTrail(x: number, y: number, _color: number): void {
+    try {
     this.trailEmitter.emitParticleAt(x, y, 1);
+    } catch (e) {
+      GameLogger.error('Particles', 'emitTrail failed', e);
+    }
   }
 
   /**
    * Expanding ring using Graphics tween (no particle texture needed).
    */
   emitShockwave(x: number, y: number, radius: number): void {
+    try {
     const gfx = this.scene.add.graphics();
     gfx.setDepth(10);
     gfx.lineStyle(3, COLORS.shockwave, 1);
@@ -334,12 +364,17 @@ export class ParticleManager {
         gfx.destroy();
       },
     });
+    } catch (e) {
+      GameLogger.error('Particles', 'emitShockwave failed', e);
+    }
   }
 
   /**
    * Circular slow-motion burst — particles decelerate.
    */
   emitSlowMotion(x: number, y: number): void {
+    GameLogger.debug('Particles', 'emitSlowMotion called', { x, y });
+    try {
     const emitter = this.scene.add.particles(x, y, this.TEX_GLOW, {
       speed: { min: 20, max: 80 },
       angle: { min: 0, max: 360 },
@@ -355,6 +390,9 @@ export class ParticleManager {
     emitter.explode(24, x, y);
 
     this.scene.time.delayedCall(1100, () => emitter.destroy());
+    } catch (e) {
+      GameLogger.error('Particles', 'emitSlowMotion failed', e);
+    }
   }
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
