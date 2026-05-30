@@ -201,8 +201,46 @@ export class MenuScene extends Phaser.Scene {
     });
     playBg.on('pointerup', () => { this._transitionToGame(); });
 
+    // ── ETAPAS button ─────────────────────────────────────────────────────────
+    const stagesY = btnY + 75;
+    const stagesContainer = this.add.container(W / 2, stagesY).setAlpha(0);
+
+    const stagesBg = this.add.graphics();
+    stagesBg.fillStyle(0x8800ff, 1);
+    stagesBg.fillRoundedRect(-120, -30, 240, 60, 30);
+    const stagesGlow = this.add.graphics();
+    stagesGlow.lineStyle(3, 0x8800ff, 0.5);
+    stagesGlow.strokeRoundedRect(-123, -33, 246, 66, 32);
+
+    const stagesText = this.add.text(0, 0, '⚡ ETAPAS', {
+      fontFamily: 'monospace',
+      fontSize: '22px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    stagesContainer.add([stagesGlow, stagesBg, stagesText]);
+
+    stagesBg.setInteractive(
+      new Phaser.Geom.Rectangle(-120, -30, 240, 60),
+      Phaser.Geom.Rectangle.Contains,
+    );
+    stagesBg.on('pointerover', () => {
+      this.tweens.add({ targets: stagesContainer, scaleX: 1.05, scaleY: 1.05, duration: 120, ease: 'Power1' });
+      stagesGlow.clear();
+      stagesGlow.lineStyle(4, 0x8800ff, 0.9);
+      stagesGlow.strokeRoundedRect(-123, -33, 246, 66, 32);
+    });
+    stagesBg.on('pointerout', () => {
+      this.tweens.add({ targets: stagesContainer, scaleX: 1, scaleY: 1, duration: 120, ease: 'Power1' });
+      stagesGlow.clear();
+      stagesGlow.lineStyle(3, 0x8800ff, 0.5);
+      stagesGlow.strokeRoundedRect(-123, -33, 246, 66, 32);
+    });
+    stagesBg.on('pointerup', () => { this.scene.start('StageSelectScene'); });
+
     // ── BEST TIMES button ──────────────────────────────────────────────────────
-    const bestY = btnY + 80;
+    const bestY = btnY + 155;
     const bestContainer = this.add.container(W / 2, bestY).setAlpha(0);
 
     const bestBg = this.add.graphics();
@@ -241,11 +279,19 @@ export class MenuScene extends Phaser.Scene {
       ease: 'Back.easeOut',
     });
     this.tweens.add({
+      targets: stagesContainer,
+      alpha: 1,
+      y: stagesY,
+      duration: 400,
+      delay: 650,
+      ease: 'Back.easeOut',
+    });
+    this.tweens.add({
       targets: bestContainer,
       alpha: 1,
       y: bestY,
       duration: 400,
-      delay: 700,
+      delay: 800,
       ease: 'Back.easeOut',
     });
   }

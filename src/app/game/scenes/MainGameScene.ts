@@ -32,7 +32,7 @@ const H = GAME_CONFIG.height;
 
 export class MainGameScene extends Phaser.Scene {
   // Core objects
-  private player!: Player;
+  protected player!: Player;
 
   // Systems
   private inputManager!:   InputManager;
@@ -60,6 +60,9 @@ export class MainGameScene extends Phaser.Scene {
   private timerManager!:  TimerManager;
   private stageCompleted = false;
 
+  /** Subclasses can set this to add a base difficulty offset (e.g. FinalStageScene). */
+  protected difficultyOffset = 0;
+
   // Background
   private bgGraphics!: Phaser.GameObjects.Graphics;
 
@@ -68,8 +71,8 @@ export class MainGameScene extends Phaser.Scene {
   private startTime  = 0;
   private totalDistance = 0;
 
-  constructor() {
-    super({ key: 'MainGameScene' });
+  constructor(config: Phaser.Types.Scenes.SettingsConfig = { key: 'MainGameScene' }) {
+    super(config);
   }
 
   // ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -264,7 +267,7 @@ export class MainGameScene extends Phaser.Scene {
 
     // Difficulty scales with distance traveled upward
     const chunksPassed = Math.floor(-this.player.y / GAME_CONFIG.level.chunkHeight);
-    this.levelGen.setDifficulty(chunksPassed * GAME_CONFIG.level.difficultyScalePerChunk);
+    this.levelGen.setDifficulty(chunksPassed * GAME_CONFIG.level.difficultyScalePerChunk + this.difficultyOffset);
     } catch (e) {
       GameLogger.error('Scene', 'Error in update', e);
     }

@@ -249,3 +249,29 @@ export interface StageFinishPayload {
   score: number;
   maxCombo: number;
 }
+
+// ── Stage Config ──────────────────────────────────────────────
+export enum StageType {
+  MAIN         = 'MAIN',
+  POWER_SPEED  = 'POWER_SPEED',
+  POWER_SHIELD = 'POWER_SHIELD',
+  POWER_SCORE  = 'POWER_SCORE',
+  POWER_GHOST  = 'POWER_GHOST',
+  POWER_FREEZE = 'POWER_FREEZE',
+  POWER_MAGNET = 'POWER_MAGNET',
+  POWER_SLOW   = 'POWER_SLOW',
+  FINAL        = 'FINAL',
+}
+
+export interface IStageConfig {
+  type: StageType;
+  name: string;           // Display name e.g. "Etapa Velocidad"
+  description: string;    // Short description for stage select screen
+  emoji: string;          // Icon emoji
+  forcedPower: PowerType | null;  // null = MAIN and FINAL (no forced power)
+  infinitePower: boolean; // true for power stages (power never expires)
+  bgColor: number;        // Phaser hex background tint
+  accentColor: number;    // Accent glow color
+  difficulty: number;     // 1.0 = normal, 1.5 = hard (FINAL)
+  sceneKey: string;       // Phaser scene key string
+}
