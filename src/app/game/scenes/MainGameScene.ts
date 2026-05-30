@@ -179,6 +179,9 @@ export class MainGameScene extends Phaser.Scene {
     // ── UI depth setup ───────────────────────────────────────────────────────
     this.player.setDepth(10);
 
+    // ── Back-to-menu button ──────────────────────────────────────────────────
+    this._addMenuButton();
+
     // Restart via Angular UI button
     window.addEventListener('gs:ui:restart', this._handleRestart);
 
@@ -271,6 +274,57 @@ export class MainGameScene extends Phaser.Scene {
     } catch (e) {
       GameLogger.error('Scene', 'Error in update', e);
     }
+  }
+
+  // ── Menu Button ───────────────────────────────────────────────────────────
+
+  private _addMenuButton(): void {
+    const pad = 10;
+    const btnW = 80;
+    const btnH = 30;
+    const x = pad + btnW / 2;
+    const y = pad + btnH / 2;
+
+    const bg = this.add.graphics()
+      .setScrollFactor(0)
+      .setDepth(210);
+    bg.fillStyle(0x000000, 0.55);
+    bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+    bg.lineStyle(1.5, 0x6644aa, 0.9);
+    bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+    bg.setPosition(x, y);
+
+    const label = this.add.text(x, y, '🏠 MENÚ', {
+      fontFamily: 'monospace',
+      fontSize: '11px',
+      color: '#ccbbff',
+    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(211);
+
+    // Invisible hit zone
+    const zone = this.add.zone(x, y, btnW, btnH)
+      .setScrollFactor(0)
+      .setDepth(212)
+      .setInteractive({ useHandCursor: true });
+
+    zone.on('pointerover', () => {
+      label.setColor('#ffffff');
+      bg.clear();
+      bg.fillStyle(0x331166, 0.9);
+      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+      bg.lineStyle(1.5, 0xaa88ff, 1);
+      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+    });
+    zone.on('pointerout', () => {
+      label.setColor('#ccbbff');
+      bg.clear();
+      bg.fillStyle(0x000000, 0.55);
+      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+      bg.lineStyle(1.5, 0x6644aa, 0.9);
+      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+    });
+    zone.on('pointerup', () => {
+      this.scene.start('MenuScene');
+    });
   }
 
   // ── Event Bindings ────────────────────────────────────────────────────────
