@@ -45,6 +45,7 @@ export class GameOverComponent implements OnInit, OnDestroy {
   visible = false;
 
   selectedEmoji = '😀';
+  playerName = 'AAA';
   leaderboardEntries: LeaderboardEntry[] = [];
   timeSaved = false;
 
@@ -75,6 +76,10 @@ export class GameOverComponent implements OnInit, OnDestroy {
     this.gameState.requestRestart();
   }
 
+  onNameChange(value: string): void {
+    this.playerName = value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 4) || 'AAA';
+  }
+
   onEmojiSelect(emoji: string): void {
     this.selectedEmoji = emoji;
   }
@@ -82,6 +87,7 @@ export class GameOverComponent implements OnInit, OnDestroy {
   onSaveTime(): void {
     if (this.timeSaved) return;
     const entry: LeaderboardEntry = {
+      name: this.playerName || 'AAA',
       emoji: this.selectedEmoji,
       timeMs: this.state.finishTimeMs,
       score: this.state.finalScore,
@@ -89,6 +95,10 @@ export class GameOverComponent implements OnInit, OnDestroy {
     };
     this.leaderboardEntries = this.leaderboardSvc.addEntry(entry);
     this.timeSaved = true;
+  }
+
+  onGoToStageSelect(): void {
+    this.gameState.requestStageSelect();
   }
 
   isNewBest(): boolean {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export interface LeaderboardEntry {
+  name: string;   // 1-4 char initials
   emoji: string;
   timeMs: number;
   score: number;

@@ -138,6 +138,10 @@ export class GameStateService implements OnDestroy {
     window.dispatchEvent(new CustomEvent('gs:ui:restart'));
   }
 
+  requestStageSelect(): void {
+    window.dispatchEvent(new CustomEvent('gs:ui:stage-select'));
+  }
+
   private patch(partial: Partial<UIState>): void {
     this._state = { ...this._state, ...partial };
     this.state$.next({ ...this._state });

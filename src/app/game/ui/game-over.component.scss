@@ -235,3 +235,46 @@
 .rank-1 { .lb-rank, .lb-time { color: gold; } }
 .rank-2 { .lb-rank, .lb-time { color: silver; } }
 .rank-3 { .lb-rank, .lb-time { color: #cd7f32; } }
+
+.name-input {
+  display: block;
+  margin: 8px auto;
+  width: 100px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  border-radius: 8px;
+  color: #00ffff;
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  outline: none;
+  &:focus { border-color: #00ffff; box-shadow: 0 0 12px rgba(0,255,255,0.4); }
+}
+
+.lb-name { flex: 1; font-family: monospace; font-size: 12px; font-weight: 700; color: #e0e0ff; }
+.lb-time { flex: none; font-family: monospace; font-size: 11px; min-width: 60px; text-align: right; }
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.stages-btn {
+  padding: 12px 18px;
+  background: rgba(100, 0, 200, 0.5);
+  border: 2px solid rgba(180, 100, 255, 0.7);
+  border-radius: 10px;
+  color: #cc88ff;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  &:active { transform: scale(0.95); }
+}

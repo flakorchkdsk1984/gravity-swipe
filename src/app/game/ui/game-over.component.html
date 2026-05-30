@@ -21,7 +21,19 @@
     <!-- Emoji selector (only before saving) -->
     <ng-container *ngIf="!timeSaved">
       <div class="emoji-section">
-        <div class="emoji-title">CHOOSE YOUR AVATAR</div>
+        <div class="emoji-title">TU NOMBRE (1-4 LETRAS)</div>
+        <input
+          class="name-input"
+          type="text"
+          maxlength="4"
+          [value]="playerName"
+          (input)="onNameChange($any($event.target).value)"
+          placeholder="AAA"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        />
+        <div class="emoji-title" style="margin-top:10px">ELIGE TU AVATAR</div>
         <div class="emoji-grid">
           <button
             *ngFor="let e of EMOJI_OPTIONS"
@@ -32,7 +44,7 @@
           >{{ e }}</button>
         </div>
         <button class="save-btn" (click)="onSaveTime()" (touchend)="onSaveTime()">
-          SAVE TIME
+          💾 GUARDAR TIEMPO
         </button>
       </div>
     </ng-container>
@@ -46,10 +58,11 @@
         [class.rank-1]="i === 0"
         [class.rank-2]="i === 1"
         [class.rank-3]="i === 2"
-        [class.current-entry]="timeSaved && entry.emoji === selectedEmoji && entry.timeMs === state.finishTimeMs"
+        [class.current-entry]="timeSaved && entry.name === playerName && entry.timeMs === state.finishTimeMs"
       >
         <span class="lb-rank">#{{ i + 1 }}</span>
         <span class="lb-emoji">{{ entry.emoji }}</span>
+        <span class="lb-name">{{ entry.name || entry.emoji }}</span>
         <span class="lb-time">{{ formatTime(entry.timeMs) }}</span>
         <span class="lb-score">{{ entry.score | number }}</span>
       </div>
@@ -76,9 +89,15 @@
     </div>
   </ng-template>
 
-  <button class="restart-btn" (click)="onRestart()" (touchend)="onRestart()">
-    TAP TO RETRY
-  </button>
+  <!-- Buttons -->
+  <div class="action-buttons">
+    <button class="restart-btn" (click)="onRestart()" (touchend)="onRestart()">
+      🔄 REINTENTAR
+    </button>
+    <button *ngIf="state.stageCompleted" class="stages-btn" (click)="onGoToStageSelect()" (touchend)="onGoToStageSelect()">
+      🗺️ VER ETAPAS
+    </button>
+  </div>
 
   <div class="best-score">BEST: {{ state.bestScore | number }}</div>
 </div>

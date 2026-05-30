@@ -201,6 +201,7 @@ export class MainGameScene extends Phaser.Scene {
 
     // Restart via Angular UI button
     window.addEventListener('gs:ui:restart', this._handleRestart);
+    window.addEventListener('gs:ui:stage-select', this._handleGoToStageSelect);
 
     // Wire cleanup to scene shutdown event (Phaser.Scene has no overridable shutdown method)
     this.events.once('shutdown', this.shutdown, this);
@@ -547,9 +548,14 @@ export class MainGameScene extends Phaser.Scene {
   // ── Cleanup ─────────────────────────────────────────────────────────────────
 
   // Called when this scene is shut down / restarted.
+  private _handleGoToStageSelect = (): void => {
+    this.scene.start('StageSelectScene');
+  };
+
   // Not typed on Phaser.Scene but it exists at runtime.
   shutdown(): void {
     window.removeEventListener('gs:ui:restart', this._handleRestart as EventListener);
+    window.removeEventListener('gs:ui:stage-select', this._handleGoToStageSelect as EventListener);
     this.tutorialManager?.destroy();
     EventBus.removeAllListeners();
     this.powerManager?.destroy();
