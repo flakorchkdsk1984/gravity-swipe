@@ -1,9 +1,12 @@
 import { MainGameScene } from './MainGameScene';
 import { StageType } from '../config/types';
 import { GAME_CONFIG } from '../config/GameConfig';
+import { StageIntroPanel } from '../systems/StageIntroPanel';
+import { getStageConfig } from '../config/StageConfig';
 
 export class FinalStageScene extends MainGameScene {
   static readonly KEY = 'FinalStageScene';
+  private introPanel!: StageIntroPanel;
 
   constructor() {
     super({ key: FinalStageScene.KEY });
@@ -15,6 +18,13 @@ export class FinalStageScene extends MainGameScene {
     super.create();
     this.cameras.main.setBackgroundColor(0x0d0005);
     this._addFinalStageHud();
+
+    // Freeze game until player dismisses intro
+    this.isGameOver = true;
+    this.introPanel = new StageIntroPanel(this);
+    this.introPanel.show(getStageConfig(StageType.FINAL), () => {
+      this.isGameOver = false;
+    });
   }
 
   protected override _getCompletedStageType(): StageType {
@@ -36,7 +46,6 @@ export class FinalStageScene extends MainGameScene {
       },
     ).setOrigin(0.5, 0).setScrollFactor(0).setDepth(200);
 
-    // Pulsing tween on the trophy text
     this.tweens.add({
       targets: text,
       alpha: { from: 1, to: 0.5 },
@@ -45,5 +54,10 @@ export class FinalStageScene extends MainGameScene {
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
+  }
+
+  override shutdown(): void {
+    this.introPanel?.destroy();
+    super.shutdown();
   }
 }

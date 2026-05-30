@@ -3,12 +3,14 @@ import { IStageConfig, StageType } from '../config/types';
 import { GameEvent } from '../config/types';
 import { EventBus } from '../systems/EventBus';
 import { GAME_CONFIG } from '../config/GameConfig';
+import { StageIntroPanel } from '../systems/StageIntroPanel';
 
 export class PowerStageScene extends MainGameScene {
   static readonly KEY = 'PowerStageScene';
 
   private stageConfig!: IStageConfig;
   private powerHudText!: Phaser.GameObjects.Text;
+  private introPanel!: StageIntroPanel;
 
   constructor() {
     super({ key: PowerStageScene.KEY });
@@ -24,6 +26,13 @@ export class PowerStageScene extends MainGameScene {
     this._applyForcedPower();
     this._setupInfinitePower();
     this._addPowerHud();
+
+    // Freeze game until player dismisses the intro panel
+    this.isGameOver = true;
+    this.introPanel = new StageIntroPanel(this);
+    this.introPanel.show(this.stageConfig, () => {
+      this.isGameOver = false;
+    });
   }
 
   protected override _getCompletedStageType(): StageType {
@@ -61,6 +70,7 @@ export class PowerStageScene extends MainGameScene {
 
   override shutdown(): void {
     EventBus.off(GameEvent.POWER_EXPIRED, this._applyForcedPower, this);
+    this.introPanel?.destroy();
     super.shutdown();
   }
 }

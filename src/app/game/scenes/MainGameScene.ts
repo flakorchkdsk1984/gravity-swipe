@@ -29,6 +29,7 @@ import { FinishLine }    from '../systems/FinishLine';
 import { TimerManager }  from '../systems/TimerManager';
 import { TutorialManager } from '../systems/TutorialManager';
 import { StoryManager }  from '../systems/StoryManager';
+import { VictoryMusicSystem } from '../systems/VictoryMusicSystem';
 
 const W = GAME_CONFIG.width;
 const H = GAME_CONFIG.height;
@@ -78,7 +79,7 @@ export class MainGameScene extends Phaser.Scene {
   private bgGraphics!: Phaser.GameObjects.Graphics;
 
   // Game state
-  private isGameOver = false;
+  protected isGameOver = false;
   private startTime  = 0;
   private totalDistance = 0;
 
@@ -468,6 +469,9 @@ export class MainGameScene extends Phaser.Scene {
     // Celebrate FX
     this.particleManager.emitShockwave(this.player.x, this.player.y, 120);
     EventBus.emit(GameEvent.SCREEN_SHAKE, { intensity: 8, duration: 600 });
+
+    // Play Indian-style victory melody (5 seconds, Web Audio API)
+    VictoryMusicSystem.play();
 
     this.time.delayedCall(800, () => {
       EventBus.emit(GameEvent.STAGE_FINISH, payload);

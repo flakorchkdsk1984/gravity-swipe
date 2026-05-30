@@ -12,6 +12,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0x6600ff,
     difficulty: 1.0,
     sceneKey: 'MainGameScene',
+    introTitle: 'GRAVITY SWIPE',
+    introLines: [
+      'Desliza para lanzarte. Recoge cristales de poder.',
+      'Esquiva obstáculos y enemigos en tu ascenso.',
+      'Cada cristal otorga un poder único por tiempo limitado.',
+    ],
+    introTip: '💡 Carga el desliz más tiempo para un dash más potente',
   },
   {
     type: StageType.POWER_SPEED,
@@ -24,6 +31,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0xff6600,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '🚀 PROPULSIÓN COHETE',
+    introLines: [
+      'Tu dash se convierte en un chorro de plasma hipersónico.',
+      'Cada lanzamiento te dispara a velocidad extrema.',
+      'Los obstáculos aparecen antes — necesitas reflejos de rayo.',
+    ],
+    introTip: '💡 Usa swipes CORTOS y precisos. La velocidad amplifica cada error.',
   },
   {
     type: StageType.POWER_SHIELD,
@@ -36,6 +50,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0x00ff88,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '��️ BURBUJA DE ESCUDO',
+    introLines: [
+      'Una burbuja de energía te protege de UN impacto fatal.',
+      'Al absorber daño el escudo se recarga automáticamente.',
+      'Puedes rozar obstáculos sin morir — úsalo para tomar rutas imposibles.',
+    ],
+    introTip: '💡 No abuses del escudo. Cada impacto tiene un cooldown de recarga.',
   },
   {
     type: StageType.POWER_SCORE,
@@ -48,6 +69,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0xffff00,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '⭐ MULTIPLICADOR x2',
+    introLines: [
+      'Cada punto que ganas se DUPLICA mientras este poder esté activo.',
+      'Los combos se vuelven exponencialmente más valiosos.',
+      'Destruir enemigos y esquivar dan bonificaciones x2 automáticamente.',
+    ],
+    introTip: '💡 Encadena combos sin romperse — un combo x10 con x2 = puntaje masivo.',
   },
   {
     type: StageType.POWER_GHOST,
@@ -60,6 +88,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0xcc00ff,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '👻 MODO FANTASMA',
+    introLines: [
+      'Te vuelves intangible — atraviesas paredes y bloques.',
+      'Los obstáculos sólidos ya no son una amenaza.',
+      'Cuidado: los enemigos en movimiento aún pueden seguirte.',
+    ],
+    introTip: '💡 Toma las rutas más directas. Pasa a TRAVÉS de todo, no alrededor.',
   },
   {
     type: StageType.POWER_FREEZE,
@@ -72,6 +107,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0x00ffff,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '❄️ TIEMPO CONGELADO',
+    introLines: [
+      'Congelas el tiempo de todos los obstáculos y enemigos.',
+      'El mundo se detiene — solo TÚ puedes moverte libremente.',
+      'Perfecta para planificar rutas complejas con calma.',
+    ],
+    introTip: '💡 Avanza rápido — no hay presión de movimiento. Escoge la ruta óptima.',
   },
   {
     type: StageType.POWER_MAGNET,
@@ -84,6 +126,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0x0088ff,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '🧲 CAMPO MAGNÉTICO',
+    introLines: [
+      'Los cristales de poder son ATRAÍDOS hacia ti desde la distancia.',
+      'También deflectas proyectiles y partículas de energía.',
+      'No necesitas ir a buscarlos — enfócate en esquivar y avanzar.',
+    ],
+    introTip: '💡 Con el imán, prioriza el movimiento hacia arriba. Los cristales vienen a ti.',
   },
   {
     type: StageType.POWER_SLOW,
@@ -96,6 +145,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0xff0088,
     difficulty: 1.0,
     sceneKey: 'PowerStageScene',
+    introTitle: '🐌 DILATACIÓN TEMPORAL',
+    introLines: [
+      'El tiempo se ralentiza al 50% de velocidad normal.',
+      'Todo parece más manejable — obstáculos, enemigos, colisiones.',
+      'Cada movimiento tuyo sigue siendo a velocidad normal — eres el más rápido.',
+    ],
+    introTip: '💡 La precisión reemplaza la velocidad. Cada swipe debe ser intencional.',
   },
   {
     type: StageType.FINAL,
@@ -108,6 +164,13 @@ export const STAGE_CONFIGS: IStageConfig[] = [
     accentColor: 0xffd700,
     difficulty: 1.5,
     sceneKey: 'FinalStageScene',
+    introTitle: '🏆 EL DESAFÍO FINAL',
+    introLines: [
+      'Todos los poderes aprendidos se pondrán a prueba aquí.',
+      'Dificultad 1.5x — más obstáculos, más rápido, más enemigos.',
+      'Los cristales de poder aparecen pero duran menos tiempo.',
+    ],
+    introTip: '💡 Recuerda cada poder. Recoge cristales estratégicamente para survivir.',
   },
 ];
 

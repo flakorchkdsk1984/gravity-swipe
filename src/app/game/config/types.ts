@@ -274,4 +274,7 @@ export interface IStageConfig {
   accentColor: number;    // Accent glow color
   difficulty: number;     // 1.0 = normal, 1.5 = hard (FINAL)
   sceneKey: string;       // Phaser scene key string
+  introTitle: string;     // Large title shown on intro panel
+  introLines: string[];   // 2-4 explanation lines
+  introTip: string;       // Tactical tip shown at bottom
 }
