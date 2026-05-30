@@ -7,6 +7,24 @@ y este proyecto adhiere al [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [0.0.4-beta] — 2026-05-30
+
+### Agregado
+- **Sistema de etapas**: menú de selección con 9 etapas disponibles
+- **StageSelectScene**: grid 2×5 con tarjetas animadas, scroll táctil y de ratón
+- **Etapas de poder × 7**: una etapa por cada tipo de poder (Velocidad, Escudo, Puntos, Fantasma, Hielo, Imán, Cámara Lenta) donde el poder está activo de forma infinita para aprender su mecánica
+- **Etapa Final**: dificultad ×1.5, estética dorada, desafío definitivo
+- **PowerStageScene**: extiende MainGameScene, aplica poder forzado infinito, HUD con nombre y color del poder
+- **FinalStageScene**: extiende MainGameScene, difficulty offset +1.5, HUD "🏆 ETAPA FINAL" dorado
+- **Botón "⚡ ETAPAS"** en MenuScene (púrpura eléctrico) para acceder a la selección de etapas
+
+### Técnico
+- `MainGameScene.player` y `difficultyOffset` ahora `protected` para extensión por subclases
+- `StageType` enum y `IStageConfig` interface agregados a `types.ts`
+- `StageConfig.ts` nuevo: `STAGE_CONFIGS` array con configuración de las 9 etapas
+
+---
+
 ## [Sin publicar]
 
 _Próximos cambios pendientes de lanzamiento._
