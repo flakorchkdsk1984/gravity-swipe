@@ -454,6 +454,7 @@ export class MainGameScene extends Phaser.Scene {
   private _handleStageComplete = (): void => {
     if (this.stageCompleted) return;
     this.stageCompleted = true;
+    this.isGameOver = true;   // Freeze game loop while overlay is visible
     this.timerManager.finish();
 
     StoryManager.getInstance().unlockNext(this._getCompletedStageType());
@@ -493,8 +494,13 @@ export class MainGameScene extends Phaser.Scene {
   };
 
   private _handleRestart = (): void => {
-    this.isGameOver = false;
-    this.startTime  = Date.now();
+    // Clear any pending delayedCall timers (e.g. GAME_OVER/STAGE_FINISH that
+    // might fire after restart and flip isGameOver back to true)
+    this.time.removeAllEvents();
+
+    this.isGameOver    = false;
+    this.stageCompleted = false;
+    this.startTime     = Date.now();
 
     // Reset systems
     this.comboSystem.reset();
@@ -506,7 +512,6 @@ export class MainGameScene extends Phaser.Scene {
     this.powerPool.releaseAll();
     this.timerManager.reset();
     this.timerManager.start();
-    this.stageCompleted = false;
 
     // Respawn player (also calls resetPower internally)
     this.player.respawn(W / 2, H - 150);
@@ -552,7 +557,13 @@ export class MainGameScene extends Phaser.Scene {
 
   // Called when this scene is shut down / restarted.
   private _handleGoToStageSelect = (): void => {
-    this.scene.start('StageSelectScene');
+    // Reset Angular overlay BEFORE switching scene, otherwise the
+    // StageSelectScene renders behind the still-visible game-over overlay.
+    EventBus.emit(GameEvent.GAME_START, {});
+    // Small delay so Angular can process the state reset before scene swap
+    this.time.delayedCall(50, () => {
+      this.scene.start('StageSelectScene');
+    });
   };
 
   // Not typed on Phaser.Scene but it exists at runtime.
