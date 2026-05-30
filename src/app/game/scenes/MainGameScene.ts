@@ -20,12 +20,15 @@ import {
   HitPayload, ComboPayload, ScorePayload,
   GameOverPayload,
   PowerType, PowerConfig, PowerPayload, StageFinishPayload,
+  StageType,
 } from '../config/types';
 import { GAME_CONFIG, COLORS, FINISH_Y, FINISH_CHUNKS, POWER_COLORS } from '../config/GameConfig';
 import { PowerObject }   from '../objects/PowerObject';
 import { PowerManager }  from '../systems/PowerManager';
 import { FinishLine }    from '../systems/FinishLine';
 import { TimerManager }  from '../systems/TimerManager';
+import { TutorialManager } from '../systems/TutorialManager';
+import { StoryManager }  from '../systems/StoryManager';
 
 const W = GAME_CONFIG.width;
 const H = GAME_CONFIG.height;
@@ -60,8 +63,16 @@ export class MainGameScene extends Phaser.Scene {
   private timerManager!:  TimerManager;
   private stageCompleted = false;
 
+  // Tutorial
+  private tutorialManager?: TutorialManager;
+
   /** Subclasses can set this to add a base difficulty offset (e.g. FinalStageScene). */
   protected difficultyOffset = 0;
+
+  /** Subclasses override to return the StageType that should be unlocked after this scene completes. */
+  protected _getCompletedStageType(): StageType {
+    return StageType.MAIN;
+  }
 
   // Background
   private bgGraphics!: Phaser.GameObjects.Graphics;
@@ -175,6 +186,12 @@ export class MainGameScene extends Phaser.Scene {
 
     // ── Event Listeners ──────────────────────────────────────────────────────
     this._bindEvents();
+
+    // ── Tutorial (first play only) ────────────────────────────────────────────
+    if (TutorialManager.shouldShow()) {
+      this.tutorialManager = new TutorialManager(this);
+      this.tutorialManager.start();
+    }
 
     // ── UI depth setup ───────────────────────────────────────────────────────
     this.player.setDepth(10);
@@ -436,6 +453,8 @@ export class MainGameScene extends Phaser.Scene {
     this.stageCompleted = true;
     this.timerManager.finish();
 
+    StoryManager.getInstance().unlockNext(this._getCompletedStageType());
+
     const payload: StageFinishPayload = {
       timeMs:   this.timerManager.getElapsedMs(),
       score:    this.scoreManager.getScore(),
@@ -531,6 +550,7 @@ export class MainGameScene extends Phaser.Scene {
   // Not typed on Phaser.Scene but it exists at runtime.
   shutdown(): void {
     window.removeEventListener('gs:ui:restart', this._handleRestart as EventListener);
+    this.tutorialManager?.destroy();
     EventBus.removeAllListeners();
     this.powerManager?.destroy();
     this.finishLine?.destroy();

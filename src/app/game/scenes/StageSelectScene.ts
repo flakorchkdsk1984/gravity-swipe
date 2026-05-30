@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { GAME_CONFIG } from '../config/GameConfig';
 import { STAGE_CONFIGS } from '../config/StageConfig';
 import { IStageConfig } from '../config/types';
+import { StoryManager } from '../systems/StoryManager';
+import { StoryScene } from './StoryScene';
 
 const W = GAME_CONFIG.width as number;
 const H = GAME_CONFIG.height as number;
@@ -71,12 +73,27 @@ export class StageSelectScene extends Phaser.Scene {
     const totalH = START_Y + rows * (CARD_H + PAD_Y) + PAD_Y;
     const visibleH = H - TITLE_BAR_H;
     this.maxScrollY = Math.max(0, totalH - visibleH);
+
+    // Reset progress button
+    const resetBtn = this.add.text(W / 2, H - 14, 'REINICIAR PROGRESO', {
+      fontFamily: 'monospace',
+      fontSize: '11px',
+      color: '#555566',
+    }).setOrigin(0.5, 1).setDepth(12).setInteractive({ useHandCursor: true });
+
+    resetBtn.on('pointerover', () => resetBtn.setColor('#ff4466'));
+    resetBtn.on('pointerout', () => resetBtn.setColor('#555566'));
+    resetBtn.on('pointerup', () => {
+      StoryManager.getInstance().resetProgress();
+      this.scene.restart();
+    });
   }
 
   private _createCard(cfg: IStageConfig, x: number, y: number): Phaser.GameObjects.Container {
     const card = this.add.container(x, y);
     const hw = CARD_W / 2;
     const hh = CARD_H / 2;
+    const unlocked = StoryManager.getInstance().isUnlocked(cfg.type);
 
     const bg = this.add.graphics();
     bg.fillStyle(cfg.bgColor, 0.9);
@@ -106,39 +123,64 @@ export class StageSelectScene extends Phaser.Scene {
     }).setOrigin(0.5, 0.5);
 
     const hitZone = this.add.rectangle(0, 0, CARD_W, CARD_H, 0x000000, 0)
-      .setInteractive({ useHandCursor: true });
+      .setInteractive({ useHandCursor: unlocked });
 
-    hitZone.on('pointerover', () => {
-      this.tweens.add({ targets: card, scaleX: 1.05, scaleY: 1.05, duration: 80, ease: 'Power1' });
-    });
-    hitZone.on('pointerout', () => {
-      this.tweens.add({ targets: card, scaleX: 1, scaleY: 1, duration: 80, ease: 'Power1' });
-    });
-    hitZone.on('pointerdown', () => {
-      this.tweens.add({ targets: card, scaleX: 0.95, scaleY: 0.95, duration: 60, ease: 'Power1' });
-    });
-    hitZone.on('pointerup', () => {
-      if (!this._wasDragging()) {
+    if (unlocked) {
+      hitZone.on('pointerover', () => {
+        this.tweens.add({ targets: card, scaleX: 1.05, scaleY: 1.05, duration: 80, ease: 'Power1' });
+      });
+      hitZone.on('pointerout', () => {
         this.tweens.add({ targets: card, scaleX: 1, scaleY: 1, duration: 80, ease: 'Power1' });
-        this._startStage(cfg);
-      }
-    });
+      });
+      hitZone.on('pointerdown', () => {
+        this.tweens.add({ targets: card, scaleX: 0.95, scaleY: 0.95, duration: 60, ease: 'Power1' });
+      });
+      hitZone.on('pointerup', () => {
+        if (!this._wasDragging()) {
+          this.tweens.add({ targets: card, scaleX: 1, scaleY: 1, duration: 80, ease: 'Power1' });
+          this._startStage(cfg);
+        }
+      });
 
-    card.add([bg, emojiText, nameText, descText, hitZone]);
+      card.add([bg, emojiText, nameText, descText, hitZone]);
+    } else {
+      // Lock overlay
+      const lockOverlay = this.add.graphics();
+      lockOverlay.fillStyle(0x000000, 0.7);
+      lockOverlay.fillRoundedRect(-hw, -hh, CARD_W, CARD_H, 10);
+
+      const lockText = this.add.text(0, 0, '🔒 BLOQUEADO', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ff4444',
+        align: 'center',
+        fontStyle: 'bold',
+      }).setOrigin(0.5, 0.5);
+
+      hitZone.on('pointerup', () => {
+        if (!this._wasDragging()) {
+          // Brief shake to indicate locked
+          this.tweens.add({ targets: card, x: x + 5, duration: 40, yoyo: true, repeat: 3, ease: 'Linear',
+            onComplete: () => { card.x = x; } });
+        }
+      });
+
+      card.add([bg, emojiText, nameText, descText, lockOverlay, lockText, hitZone]);
+    }
+
     return card;
   }
 
   private _startStage(cfg: IStageConfig): void {
-    switch (cfg.sceneKey) {
-      case 'PowerStageScene':
-        this.scene.start('PowerStageScene', { stageConfig: cfg });
-        break;
-      case 'FinalStageScene':
-        this.scene.start('FinalStageScene');
-        break;
-      default:
-        this.scene.start('MainGameScene');
-    }
+    const nextSceneData = cfg.sceneKey === 'PowerStageScene'
+      ? { stageConfig: cfg }
+      : undefined;
+
+    this.scene.start(StoryScene.KEY, {
+      stageType: cfg.type,
+      nextSceneKey: cfg.sceneKey,
+      nextSceneData,
+    });
   }
 
   // Drag distance threshold — suppresses tap-on-card after scroll

@@ -7,6 +7,25 @@ y este proyecto adhiere al [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [0.0.5-beta] — 2026-05-30
+
+### Agregado
+- **Sistema de historia**: 9 actos narrativos con efecto máquina de escribir (StoryScene)
+- **Progresión de etapas**: las etapas se desbloquean en orden al completarlas (StoryManager, localStorage)
+- **Tutorial interactivo**: 6 tooltips secuenciales en la primera etapa — enseña carga, dash, obstáculos, combos, poderes y meta
+- **game-data.txt**: archivo de texto con definiciones y puntos de todos los objetos — fuente de verdad cargada en cada partida
+- **GameDataLoader**: singleton que parsea game-data.txt y expone datos tipados a todos los sistemas
+- **Bloqueo de etapas**: StageSelectScene muestra 🔒 en etapas no desbloqueadas
+- **Reinicio de progreso**: botón en StageSelectScene para resetear desbloqueos
+
+### Técnico
+- `PreloadScene` añade `preload()` para cargar game-data.txt via Phaser loader
+- `MainGameScene` llama `StoryManager.unlockNext()` al completar etapa
+- `PowerStageScene` y `FinalStageScene` reportan su StageType correcto al completar
+- `StoryScene` registrada en Phaser scene array
+
+---
+
 ## [0.0.4-beta] — 2026-05-30
 
 ### Agregado

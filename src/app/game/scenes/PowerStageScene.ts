@@ -1,5 +1,5 @@
 import { MainGameScene } from './MainGameScene';
-import { IStageConfig } from '../config/types';
+import { IStageConfig, StageType } from '../config/types';
 import { GameEvent } from '../config/types';
 import { EventBus } from '../systems/EventBus';
 import { GAME_CONFIG } from '../config/GameConfig';
@@ -24,6 +24,10 @@ export class PowerStageScene extends MainGameScene {
     this._applyForcedPower();
     this._setupInfinitePower();
     this._addPowerHud();
+  }
+
+  protected override _getCompletedStageType(): StageType {
+    return this.stageConfig.type;
   }
 
   private _applyForcedPower(): void {

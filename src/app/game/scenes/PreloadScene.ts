@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME_CONFIG, COLORS } from '../config/GameConfig';
+import { GameDataLoader } from '../systems/GameDataLoader';
 
 const W = GAME_CONFIG.width;
 const H = GAME_CONFIG.height;
@@ -17,7 +18,17 @@ export class PreloadScene extends Phaser.Scene {
     super({ key: 'PreloadScene' });
   }
 
+  preload(): void {
+    this.load.text('game-data', 'assets/game-data.txt');
+  }
+
   create(): void {
+    // Parse game data loaded during preload()
+    const rawText = this.cache.text.get('game-data') as string | undefined;
+    if (rawText) {
+      GameDataLoader.getInstance().parse(rawText);
+    }
+
     // Dark background
     this.add.rectangle(W / 2, H / 2, W, H, COLORS.background);
 

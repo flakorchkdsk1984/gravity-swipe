@@ -1,4 +1,5 @@
 import { MainGameScene } from './MainGameScene';
+import { StageType } from '../config/types';
 import { GAME_CONFIG } from '../config/GameConfig';
 
 export class FinalStageScene extends MainGameScene {
@@ -14,6 +15,10 @@ export class FinalStageScene extends MainGameScene {
     super.create();
     this.cameras.main.setBackgroundColor(0x0d0005);
     this._addFinalStageHud();
+  }
+
+  protected override _getCompletedStageType(): StageType {
+    return StageType.FINAL;
   }
 
   private _addFinalStageHud(): void {
