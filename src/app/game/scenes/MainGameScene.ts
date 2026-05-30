@@ -279,50 +279,77 @@ export class MainGameScene extends Phaser.Scene {
   // ── Menu Button ───────────────────────────────────────────────────────────
 
   private _addMenuButton(): void {
-    const pad = 10;
-    const btnW = 80;
-    const btnH = 30;
-    const x = pad + btnW / 2;
-    const y = pad + btnH / 2;
+    const r   = 22;          // circle radius
+    const x   = W - r - 10; // top-right corner
+    const y   = r + 10;
 
-    const bg = this.add.graphics()
-      .setScrollFactor(0)
-      .setDepth(210);
-    bg.fillStyle(0x000000, 0.55);
-    bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-    bg.lineStyle(1.5, 0x6644aa, 0.9);
-    bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-    bg.setPosition(x, y);
+    // Outer pulse ring (animates)
+    const ring = this.add.graphics().setScrollFactor(0).setDepth(500);
+    const drawRing = (alpha: number, scale: number) => {
+      ring.clear();
+      ring.lineStyle(2, 0xff4444, alpha);
+      ring.strokeCircle(x, y, r * scale);
+    };
+    drawRing(0.6, 1);
 
-    const label = this.add.text(x, y, '🏠 MENÚ', {
+    // Solid circle background
+    const circle = this.add.graphics().setScrollFactor(0).setDepth(501);
+    circle.fillStyle(0x220000, 0.88);
+    circle.fillCircle(x, y, r);
+    circle.lineStyle(2, 0xff4444, 1);
+    circle.strokeCircle(x, y, r);
+
+    // Exit icon: big ✕
+    const icon = this.add.text(x, y, '✕', {
       fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#ccbbff',
-    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(211);
+      fontSize: '20px',
+      color: '#ff5555',
+      fontStyle: 'bold',
+    }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(502);
 
-    // Invisible hit zone
-    const zone = this.add.zone(x, y, btnW, btnH)
+    // Pulse tween on ring
+    let ringScale = 1;
+    let ringDir   = 1;
+    const pulseTimer = this.time.addEvent({
+      delay: 16,
+      loop: true,
+      callback: () => {
+        ringScale += 0.008 * ringDir;
+        if (ringScale >= 1.45) ringDir = -1;
+        if (ringScale <= 1.0)  ringDir =  1;
+        drawRing(0.5 - (ringScale - 1) * 0.8, ringScale);
+      },
+    });
+
+    // Hit zone
+    const zone = this.add.zone(x, y, r * 2 + 10, r * 2 + 10)
       .setScrollFactor(0)
-      .setDepth(212)
+      .setDepth(503)
       .setInteractive({ useHandCursor: true });
 
     zone.on('pointerover', () => {
-      label.setColor('#ffffff');
-      bg.clear();
-      bg.fillStyle(0x331166, 0.9);
-      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-      bg.lineStyle(1.5, 0xaa88ff, 1);
-      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+      icon.setColor('#ffffff');
+      circle.clear();
+      circle.fillStyle(0x660000, 0.95);
+      circle.fillCircle(x, y, r);
+      circle.lineStyle(2.5, 0xff2222, 1);
+      circle.strokeCircle(x, y, r);
+      this.tweens.add({ targets: icon, scaleX: 1.2, scaleY: 1.2, duration: 100 });
     });
     zone.on('pointerout', () => {
-      label.setColor('#ccbbff');
-      bg.clear();
-      bg.fillStyle(0x000000, 0.55);
-      bg.fillRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
-      bg.lineStyle(1.5, 0x6644aa, 0.9);
-      bg.strokeRoundedRect(-btnW / 2, -btnH / 2, btnW, btnH, 8);
+      icon.setColor('#ff5555');
+      circle.clear();
+      circle.fillStyle(0x220000, 0.88);
+      circle.fillCircle(x, y, r);
+      circle.lineStyle(2, 0xff4444, 1);
+      circle.strokeCircle(x, y, r);
+      this.tweens.add({ targets: icon, scaleX: 1, scaleY: 1, duration: 100 });
+    });
+    zone.on('pointerdown', () => {
+      this.tweens.add({ targets: icon, scaleX: 0.85, scaleY: 0.85, duration: 80 });
     });
     zone.on('pointerup', () => {
+      pulseTimer.destroy();
       this.scene.start('MenuScene');
     });
   }
