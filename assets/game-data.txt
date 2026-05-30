@@ -1,0 +1,58 @@
+# ============================================================
+# GRAVITY SWIPE — Game Data File
+# Versión: 0.0.5-beta
+# Formato: CATEGORIA|ID|VALOR|NOMBRE|DESCRIPCION
+# Líneas que empiezan con # son comentarios
+# ============================================================
+
+# --- OBJETOS DE OBSTÁCULOS ---
+# Golpear obstáculos da puntos según su tipo
+OBSTACLE|wall_segment|10|Pared de Energía|Barrera de plasma. Golpéala para abrirte paso. +10 pts base.
+OBSTACLE|bumper|25|Bumper Neon|Rebota tu energía. Encadénalo para combos. +25 pts base.
+OBSTACLE|platform|15|Plataforma Flotante|Superficie sólida. Úsala como trampolín. +15 pts base.
+OBSTACLE|spinner|30|Spinner Giratorio|Gira sin parar. Difícil de golpear. +30 pts base.
+OBSTACLE|laser|20|Rayo Láser|Dispara pulsos de energía. Esquiva o destruye. +20 pts base.
+
+# --- ENEMIGOS ---
+# Los enemigos persiguen al jugador — destruirlos vale más
+ENEMY|static|100|Centinela Estático|Guarda su posición. Fácil de eliminar. +100 pts.
+ENEMY|patrol|150|Patrullero|Se mueve en ruta fija. Atácalo por la espalda. +150 pts.
+ENEMY|chaser|200|Perseguidor|Te sigue. Actívalo lejos de obstáculos. +200 pts.
+
+# --- SISTEMA DE COMBO ---
+# Los combos multiplican TODOS los puntos ganados
+COMBO|x1|0|Sin Combo|Puntuación normal. Encadena 3+ golpes para activar combo.
+COMBO|x2|3|Combo ×2|¡3 golpes seguidos! Todos los puntos ×2.
+COMBO|x3|6|Combo ×3|¡6 golpes! Todos los puntos ×3. El ritmo importa.
+COMBO|x4|12|Combo ×4|¡12 golpes! ×4 multiplicador. Estás en zona.
+COMBO|x5|20|Combo ×5 MÁXIMO|¡20 golpes! Multiplicador máximo. DOMINIO TOTAL.
+
+# --- BONUS ESPECIALES ---
+BONUS|near_miss|25|Near Miss|Pasaste rozando un obstáculo sin golpear. +25 pts.
+BONUS|bounce|5|Rebote|Rebotaste en una pared. +5 pts.
+BONUS|power_collect|500|Poder Recogido|¡Obtuviste un cristal de poder! +500 pts.
+BONUS|finish_line|5000|Meta Alcanzada|¡Llegaste a la Grieta Final! +5000 pts épicos.
+BONUS|perfect_dash|50|Dash Perfecto|Cargaste al máximo (1200ms). +50 pts de precisión.
+
+# --- PODERES (cristales de color) ---
+# Los poderes cambian la propulsión y dan habilidades especiales
+POWER|speed_boost|ROJO|Cohete Rojo|Velocidad máxima. Propulsión COHETE. Destruye todo a tu paso. Dura 5s.
+POWER|shield|NARANJA|Escudo Naranja|Protección total de UN golpe. Propulsión REBOTADOR. Bloquea el daño.
+POWER|score_x2|AMARILLO|Amplificador Amarillo|Duplica TODOS los puntos. Propulsión RAYO. Combo + ×2 = puntos épicos. Dura 10s.
+POWER|slow_extend|VERDE|Burbuja Verde|Cámara lenta. Propulsión DERIVA. El mundo se ralentiza al 25%. Dura 4s.
+POWER|freeze|AZUL|Cristal Azul|Congela enemigos. Propulsión HIELO. Enemigos paralizados 3s.
+POWER|ghost|MORADO|Sombra Morada|Modo fantasma. Propulsión FASE. Atraviesa obstáculos. Dura 4s.
+POWER|magnet|BLANCO|Imán Blanco|Atrae objetos. Propulsión ÓRBITA. Radio de atracción automático. Dura 6s.
+
+# --- MECÁNICAS DE JUEGO ---
+MECHANIC|charge|0|Sistema de Carga|Mantén presionado para cargar (0-1200ms). Más carga = más velocidad de dash.
+MECHANIC|dash|0|Sistema de Dash|Suelta para disparar en la dirección apuntada. Velocidad: 600-1800px/s.
+MECHANIC|combo_window|2000|Ventana de Combo|Tienes 2 segundos entre golpes para mantener el combo activo.
+MECHANIC|world_height|10800|Altura del Mundo|La meta está a 10800 unidades. Usa el minimapa para tracking.
+MECHANIC|timer|0|Cronómetro|Tu tiempo se mide desde el inicio. Los mejores tiempos se guardan.
+
+# --- TABLA DE PUNTUACIÓN BASE ---
+SCORE|hit_base|10|Golpe Base|Valor base de golpear cualquier objeto (antes de combo).
+SCORE|destroy_base|50|Destrucción Base|Valor base de destruir un objeto completamente.
+SCORE|near_miss|25|Casi Impacto|Pasar rozando a menos de 5px de un obstáculo.
+SCORE|bounce_bonus|5|Bonus Rebote|Cada rebote en paredes del mundo.
